@@ -181,6 +181,8 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
       ammoSprite = "3_rocket";
     } else if (player.ammoType === "magnet") {
       ammoSprite = "3_magnet";
+    } else if (player.ammoType === "clusterbomb") {
+      ammoSprite = "3_clusterbomb";
     }
     a.fillStyle = "white";
     a.font = "14px Courier";

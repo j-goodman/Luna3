@@ -36,6 +36,8 @@ var player = {
       rockets.push(new Rocket(x, y, direction, speed, rockets.length));
     } else if (player.ammoType === "magnet") {
       rockets.push(new Magnet(x, y, direction, speed, rockets.length));
+    } else if (player.ammoType === "clusterbomb") {
+      rockets.push(new Clusterbomb(x, y, direction, speed, rockets.length));
     }
     player.ammoStore[player.ammoType] -= 1;
     if (player.ammoStore[player.ammoType] <= 0) {
@@ -105,6 +107,10 @@ var Rocket = function (x, y, degrees, power, idx) {
   this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
   this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
   this.destroy = function () {
+    a.fillStyle = "#ffffff";
+    a.beginPath();
+    a.arc(this.x, this.y-16, 14, 0, 360*DEGREES, false);
+    a.fill();
     rockets[idx] = undefined;
   };
 };
@@ -123,6 +129,28 @@ var Magnet = function (x, y, degrees, power, idx) {
   this.destroy = function () {
     rockets[idx] = undefined;
   };
+};
+
+var Clusterbomb = function (x, y, degrees, power, idx) {
+  this.x = x;
+  this.y = y;
+  this.type = "clusterbomb";
+  this.sprite = "3_clusterbomb";
+  this.yaccel = 0.25;
+  this.idx = idx;
+  this.degrees = degrees;
+  this.power = power;
+  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
+  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
+  this.destroy = function () {
+    rockets[idx] = undefined;
+    for (var i=0; i < 12; i++) {
+      rockets.push(new Rocket(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+    }
+    if (Math.random() < 0.5) {
+      rockets.push(new Clusterbomb(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+    }
+  }.bind(this);
 };
 
 var Missile = function (x, y, xspeed, yspeed, idx) {
@@ -149,6 +177,9 @@ var Missile = function (x, y, xspeed, yspeed, idx) {
         (rocket.y > this.y-19 && rocket.y < this.y+19)) {
           player.score += 5;
           this.destroy();
+          if (rocket.type === "clusterbomb") {
+            rockets[idx].destroy();
+          }
         }
         if (rocket.type === "magnet") {
           if (this.x > rocket.x) {
@@ -212,7 +243,7 @@ var Powerup = function (x, y, type, sprite, idx) {
   this.idx = idx;
   this.type = type;
   this.sprite = sprite;
-  this.yspeed = 0;
+  this.yspeed = Math.random()*(-12);
   this.yaccel = 0.2;
   this.playerCollide = function () {
     if ((player.x > this.x-19 && player.x < this.x+19) &&
@@ -259,7 +290,16 @@ var Lunamod = function (x, y, idx) {
       this.y += 20;
       explosions.push(new Explosion(this.x, this.y, explosions.length));
     } else {
-      powerups.push(new Powerup(this.x, this.y-16, "magnet", "3_magnet", powerups.length));
+      var dice = Math.random();
+      for (i=0; i < dice*6.25; i++) {
+        if (dice > 0.5) {
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length));
+        } else {
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length));
+        }
+        dice += 0.5;
+        if (dice>1) {dice--;}
+      }
       explosions.push(new Explosion(this.x, this.y, explosions.length));
       explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
       explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
@@ -289,7 +329,7 @@ mover(canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods
 ghosts.push(new Ghost(450, 500, 240, ghosts.length));
 ghosts.push(new Ghost(450, 500, 300, ghosts.length));
 lunamods.push(new Lunamod(33400, 80, lunamods.length));
-powerups.push(new Powerup(Math.random()*canvas.width, -6000, "magnet", "3_magnet", powerups.length));
+powerups.push(new Powerup(Math.random()*canvas.width, -2000, "clusterbomb", "3_clusterbomb", powerups.length));
 
   setInterval(function() {
     a.clearRect(0, 0, canvas.width, canvas.height);

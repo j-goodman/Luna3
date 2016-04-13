@@ -79,7 +79,7 @@ mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghos
         } else {
           powerup.y = 496;
         }
-        if (powerup.yspeed < 10) {
+        if (powerup.yspeed < 4) {
           powerup.yspeed += powerup.yaccel;
         }
         powerup.playerCollide();
@@ -91,24 +91,24 @@ mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghos
     lunamods.forEach(function (lunamod) {
       //HOVER
       if (lunamod.y > lunamod.hoverHeight) {
-        lunamod.yaccel = -1;
+        lunamod.yaccel = -0.5;
       } else if (lunamod.y < lunamod.hoverHeight) {
         lunamod.yaccel = 0.1;
       }
       //SEEK X TARGET
       if (lunamod.x > lunamod.x) {
-        lunamod.xaccel = -1;
+        lunamod.xaccel = -0.5;
       } else if (lunamod.x < lunamod.x) {
-        lunamod.xaccel = 1;
+        lunamod.xaccel = 0.5;
       }
       //DROP AND RISE
       var dice = Math.random()*900;
       //FOLLOW PLAYER
       if (dice < 200) {
         if (lunamod.x > player.x) {
-          lunamod.xaccel = -1;
+          lunamod.xaccel = -0.5;
         } else {
-          lunamod.xaccel = 1;
+          lunamod.xaccel = 0.5;
         }
       }
       //FIRE MISSILES
