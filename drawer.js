@@ -11,8 +11,40 @@ var missiles = require('./objectArrays.js').missiles;
 var ghosts = require('./objectArrays.js').ghosts;
 var lunamods = require('./objectArrays.js').lunamods;
 var powerups = require('./objectArrays.js').powerups;
+var attacker = require('./objects/attacker.js');
 
 var Explosion = require('./constructors/Explosion');
+
+  a.drawStartScreen = function () {
+    a.fillStyle = "white";
+    if (attacker.start > 160) {
+      a.font = "60px Tahoma";
+      a.lineWidth = 1;
+      a.fillText("L     U     N     A        3", 160, 220);
+    } else {
+      a.drawInstructions();
+    }
+    a.drawCity();
+  };
+
+  a.drawInstructions = function () {
+    a.strokeStyle = "white";
+    a.strokeRect(235, 140, 50, 50);
+    a.moveTo(260, 148);
+    a.lineTo(245, 178);
+    a.lineTo(275, 178);
+    a.fill();
+    a.strokeRect(295, 140, 50, 50);
+    a.moveTo(320, 180);
+    a.lineTo(305, 150);
+    a.lineTo(335, 150);
+    a.fill();
+    a.font = "20px Courier";
+    a.fillText("toggle between HOVER & AIM", 365, 170);
+    a.strokeRect(315, 220, 140, 44);
+    a.fillText("S P A C E", 330, 248);
+    a.fillText("FIRE rocket", 475, 248);
+  };
 
   a.drawSky = function () {
     starfield.forEach(function (star) {
@@ -34,9 +66,9 @@ var Explosion = require('./constructors/Explosion');
     a.arc(450, earth.y+152, 200, 0, 360*DEGREES, false);
     a.fill();
 
-    a.drawImage(document.getElementById("earth"), 300, earth.y, 300, 300);
+    a.drawImage(earth.sprite, 300, earth.y, 300, 300);
     a.globalAlpha = 0.75;
-    a.drawImage(document.getElementById("cloudcover"), 300, earth.y, 300, 300);
+    a.drawImage(earth.cloudsprite, 300, earth.y, 300, 300);
     a.globalAlpha = 1;
     earth.y -= 0.2;
     if (earth.y < -1760) {
@@ -52,6 +84,9 @@ var Explosion = require('./constructors/Explosion');
           earth.timer === explosion.time-170 ||
           earth.timer+120 === explosion.time) {
         explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
+        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
+        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
+        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y+((Math.random()*40)-20), explosions.length));
         ghosts.forEach( function (ghost) {
           if (ghost) {
             ghost.destroy();
@@ -100,9 +135,9 @@ var Explosion = require('./constructors/Explosion');
     a.globalAlpha = 1;
 
     if (shield.health >= 0) {
-      a.drawImage(document.getElementById("city"), 400, 452, 96, 48);
-    } else if (shield.health > -12) {
-      a.drawImage(document.getElementById("ruins"), 400, 452, 96, 48);
+      a.drawImage(shield.citysprite, 400, 452, 96, 48);
+    } else if (shield.health > -8) {
+      a.drawImage(shield.ruinssprite, 400, 452, 96, 48);
     }
   };
 
@@ -117,13 +152,13 @@ var Explosion = require('./constructors/Explosion');
       a.rotate((player.angle+90)*DEGREES);
       a.translate(-16, -19);
       if (player.health > 0) {
-        a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
+        a.drawImage(player.launcherSprite, 0, 0, 32, 32);
       } else {
-        a.drawImage(document.getElementById("blastedHeap"), 0, 0, 32, 32);
+        a.drawImage(player.blastedSprite, 0, 0, 32, 32);
         player.y = 489;
       }
       a.restore();
-    a.drawImage(document.getElementById("chassis"), player.x-16, player.y-19, 32, 32);
+    a.drawImage(player.chassisSprite, player.x-16, player.y-19, 32, 32);
   };
 
   // ROCKETS are the player's defensive projectiles, MISSILES are the incoming enemy bombs

@@ -40,13 +40,14 @@ mover(canvas, a);
 
 objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-objectArrays.lunamods.push(new Lunamod(38000, 80, objectArrays.lunamods.length));
+objectArrays.lunamods.push(new Lunamod(32000, 80, objectArrays.lunamods.length));
 objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
 objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
 objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
 objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
 
   setInterval(function() {
+
     a.clearRect(0, 0, canvas.width, canvas.height);
     a.fillStyle = "black";
     a.fillRect(0, 0, canvas.width, canvas.height);
@@ -54,6 +55,8 @@ objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magn
     a.drawSky();
 
     a.drawCity();
+
+    if (attacker.start > 0) { a.drawStartScreen() ;}
 
     a.moveRockets();
     a.drawRockets();

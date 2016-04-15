@@ -27,12 +27,14 @@ var Missile = function (x, y, xspeed, yspeed, idx) {
         if ((rocket.x > this.x-19 && rocket.x < this.x+19) &&
         (rocket.y > this.y-19 && rocket.y < this.y+19)) {
           player.score += 5;
-          this.destroy();
-          if (attacker.rate > 101) {
-            attacker.rate -= 1;
-          }
-          if (rocket.type === "clusterbomb") {
+          if (rocket.type === "rocket" || rocket.type === "clusterbomb") {
             rocket.destroy();
+          }
+          if (rocket.type !== "laser") {
+            this.destroy();
+          }
+          if (attacker.rate >= 88) {
+            attacker.rate -= 1;
           }
         }
         if (rocket.type === "magnet") {

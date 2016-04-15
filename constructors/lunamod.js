@@ -12,24 +12,23 @@ var Lunamod = function (x, y, idx) {
   this.xspeed = 0;
   this.yaccel = 0;
   this.xaccel = 0;
-  this.hoverHeight = 200;
-  this.cargo = "magnet-rocket";
-  this.ammo = 11;
+  this.hoverHeight = 100;
+  this.ammo = 8;
   this.rocketCollide = function () {
     rockets.forEach(function (rocket) {
       if (rocket) {
         if ((rocket.x > this.x-32 && rocket.x < this.x+32) &&
         (rocket.y < this.y+32 && rocket.y > this.y-32)) {
           player.score += 50;
+          rocket.destroy();
           this.destroy();
-          if (rocket.type === "clusterbomb") { rocket.destroy(); }
         }
       }
     }.bind(this));
   };
   this.destroy = function () {
-    if (this.hoverHeight < 360) {
-      this.hoverHeight += 20;
+    if (this.hoverHeight < 400) {
+      this.hoverHeight += 40;
       this.y += 20;
       explosions.push(new Explosion(this.x, this.y, explosions.length));
     } else {
@@ -50,8 +49,8 @@ var Lunamod = function (x, y, idx) {
       explosions.push(new Explosion(this.x, this.y, explosions.length));
       explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
       explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
-      this.ammo = 11;
-      this.hoverHeight = 200;
+      this.ammo = 8;
+      this.hoverHeight = 100;
       this.x = 30000;
     }
   };

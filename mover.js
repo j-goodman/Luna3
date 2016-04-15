@@ -23,6 +23,13 @@ var mover = function (canvas, a) {
       if (player.overheat > 2) {
         player.overheat -= 3;
       }
+      //WRAP WHEN OUTSIDE SCREEN
+      if (player.x > canvas.width + 32) {
+        player.x = -16;
+      } else if (player.x < -32) {
+        player.x = canvas.width + 16;
+      }
+
       if (player.ammoStore["rocket"] !== 2) {
         player.ammoStore["rocket"] = 2;
       }
@@ -133,12 +140,12 @@ var mover = function (canvas, a) {
   a.moveCarrier = function () {
     carrier.x += carrier.xspeed;
     if (carrier.x > 30000) {
-      carrier.xspeed = -4;
+      carrier.xspeed = -3;
       carrier.sprite = "carrier_9";
       carrier.destroyed = false;
       carrier.y = Math.random()*canvas.height/2+12;
     } else if (carrier.x < -20000) {
-      carrier.xspeed = 4;
+      carrier.xspeed = 3;
       carrier.sprite = "carrier_3";
       carrier.destroyed = false;
       carrier.y = Math.random()*canvas.height/2+12;
@@ -188,6 +195,10 @@ var mover = function (canvas, a) {
       }
       //BE VULNERABLE TO ROCKETS
       lunamod.rocketCollide();
+      //REGULATE HEIGHT WHEN OFF SCREEN
+      if (lunamod.x < -100 || lunamod.x > canvas.width+100) {
+        lunamod.y = lunamod.hoverHeight;
+      }
       //ENACT SPEED AND ACCEL
       if ((lunamod.yspeed < 10 && lunamod.yaccel > 0)||(lunamod.yspeed > -10 && lunamod.yaccel < 0)) {
         lunamod.yspeed += lunamod.yaccel;

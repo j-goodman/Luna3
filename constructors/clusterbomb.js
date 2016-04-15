@@ -13,10 +13,10 @@ var Clusterbomb = function (x, y, degrees, power, idx) {
     smallExplosion(this);
     rockets[idx] = undefined;
     for (var i=0; i < 12; i++) {
-      rockets.push(new Rocket(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+      rockets.push(new Rocket(this.x, this.y, Math.random()*360, Math.random()*12, rockets.length));
     }
     if (Math.random() < 0.5) {
-      rockets.push(new Clusterbomb(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+      rockets.push(new Clusterbomb(this.x, this.y, Math.random()*360, Math.random()*12, rockets.length));
     }
   }.bind(this);
 };
