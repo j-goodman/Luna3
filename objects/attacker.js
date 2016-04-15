@@ -1,15 +1,15 @@
 var ghosts = require('../objectArrays.js').ghosts;
 var Ghost = require('../constructors/ghost.js');
+var shield = require('./shield.js');
 
 var attacker = {
   rate: 240,
   deployGhost: function () {
     var dice = Math.round(Math.random()*attacker.rate);
-    if (dice < 2) {
+    if (dice < 2 && shield.health > -4) {
       ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
     }
     if (this.rate < 180 && Math.random()*1600 < 4) {
-      console.log("GO");
       this.burst();
     }
   },

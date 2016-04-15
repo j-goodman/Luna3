@@ -14,16 +14,26 @@ var mover = function (canvas, a) {
   var powerups = require('./objectArrays.js').powerups;
 
   a.movePlayer = function () {
-    player.x += player.xspeed;
-    player.angle += player.spin;
-    if (player.angle < 210) {player.angle = 210;}
-    if (player.angle > 330) {player.angle = 330;}
-    player.cooldown -= 1;
-    if (player.overheat > 2) {
-      player.overheat -= 3;
-    }
-    if (player.ammoStore["rocket"] !== 2) {
-      player.ammoStore["rocket"] = 2;
+    if (player.health > 0) {
+      player.x += player.xspeed;
+      player.angle += player.spin;
+      if (player.angle < 210) {player.angle = 210;}
+      if (player.angle > 330) {player.angle = 330;}
+      player.cooldown -= 1;
+      if (player.overheat > 2) {
+        player.overheat -= 3;
+      }
+      if (player.ammoStore["rocket"] !== 2) {
+        player.ammoStore["rocket"] = 2;
+      }
+    } else {
+      carrier.destroyed = true;
+      lunamods[0].destroy();
+      powerups.forEach( function (powerup) {
+        if (powerup) {
+          powerup.destroy();
+        }
+      });
     }
   };
 

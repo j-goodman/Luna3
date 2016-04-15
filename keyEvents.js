@@ -1,4 +1,3 @@
-
 var keyEvents = function (document, player) {
   document.onkeydown = function (e) {
     switch(e.keyCode) {
@@ -12,7 +11,9 @@ var keyEvents = function (document, player) {
       break;
     case 38: //up
       player.mobile = true;
-      player.y = 482;
+      if (player.health > 0) {
+        player.y = 482;
+      }
       break;
     case 40: //down
       player.xspeed = 0;
@@ -43,10 +44,12 @@ var keyEvents = function (document, player) {
       if (player.ready) { player.fire(); }
       break;
     case 16: //shift
-      player.toggleRocket();
-      player.showCount = 1.8;
-      while (player.ammoStore[player.ammoType] <= 0) {
+      if (player.health > 0) {
         player.toggleRocket();
+        player.showCount = 1.8;
+        while (player.ammoStore[player.ammoType] <= 0) {
+          player.toggleRocket();
+        }
       }
       break;
     }

@@ -112,12 +112,17 @@ var Explosion = require('./constructors/Explosion');
   };
 
   a.drawPlayer = function () {
-    a.save();
-    a.translate(player.x, player.y);
-    a.rotate((player.angle+90)*DEGREES);
-    a.translate(-16, -19);
-    a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
-    a.restore();
+      a.save();
+      a.translate(player.x, player.y);
+      a.rotate((player.angle+90)*DEGREES);
+      a.translate(-16, -19);
+      if (player.health > 0) {
+        a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
+      } else {
+        a.drawImage(document.getElementById("blastedHeap"), 0, 0, 32, 32);
+        player.y = 489;
+      }
+      a.restore();
     a.drawImage(document.getElementById("chassis"), player.x-16, player.y-19, 32, 32);
   };
 

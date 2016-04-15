@@ -137,7 +137,6 @@
 /* 1 */
 /***/ function(module, exports) {
 
-	
 	var keyEvents = function (document, player) {
 	  document.onkeydown = function (e) {
 	    switch(e.keyCode) {
@@ -151,7 +150,9 @@
 	      break;
 	    case 38: //up
 	      player.mobile = true;
-	      player.y = 482;
+	      if (player.health > 0) {
+	        player.y = 482;
+	      }
 	      break;
 	    case 40: //down
 	      player.xspeed = 0;
@@ -182,10 +183,12 @@
 	      if (player.ready) { player.fire(); }
 	      break;
 	    case 16: //shift
-	      player.toggleRocket();
-	      player.showCount = 1.8;
-	      while (player.ammoStore[player.ammoType] <= 0) {
+	      if (player.health > 0) {
 	        player.toggleRocket();
+	        player.showCount = 1.8;
+	        while (player.ammoStore[player.ammoType] <= 0) {
+	          player.toggleRocket();
+	        }
 	      }
 	      break;
 	    }
@@ -313,12 +316,17 @@
 	  };
 	
 	  a.drawPlayer = function () {
-	    a.save();
-	    a.translate(player.x, player.y);
-	    a.rotate((player.angle+90)*DEGREES);
-	    a.translate(-16, -19);
-	    a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
-	    a.restore();
+	      a.save();
+	      a.translate(player.x, player.y);
+	      a.rotate((player.angle+90)*DEGREES);
+	      a.translate(-16, -19);
+	      if (player.health > 0) {
+	        a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
+	      } else {
+	        a.drawImage(document.getElementById("blastedHeap"), 0, 0, 32, 32);
+	        player.y = 489;
+	      }
+	      a.restore();
 	    a.drawImage(document.getElementById("chassis"), player.x-16, player.y-19, 32, 32);
 	  };
 	
@@ -510,16 +518,26 @@
 	  var powerups = __webpack_require__(6).powerups;
 	
 	  a.movePlayer = function () {
-	    player.x += player.xspeed;
-	    player.angle += player.spin;
-	    if (player.angle < 210) {player.angle = 210;}
-	    if (player.angle > 330) {player.angle = 330;}
-	    player.cooldown -= 1;
-	    if (player.overheat > 2) {
-	      player.overheat -= 3;
-	    }
-	    if (player.ammoStore["rocket"] !== 2) {
-	      player.ammoStore["rocket"] = 2;
+	    if (player.health > 0) {
+	      player.x += player.xspeed;
+	      player.angle += player.spin;
+	      if (player.angle < 210) {player.angle = 210;}
+	      if (player.angle > 330) {player.angle = 330;}
+	      player.cooldown -= 1;
+	      if (player.overheat > 2) {
+	        player.overheat -= 3;
+	      }
+	      if (player.ammoStore["rocket"] !== 2) {
+	        player.ammoStore["rocket"] = 2;
+	      }
+	    } else {
+	      carrier.destroyed = true;
+	      lunamods[0].destroy();
+	      powerups.forEach( function (powerup) {
+	        if (powerup) {
+	          powerup.destroy();
+	        }
+	      });
 	    }
 	  };
 	
@@ -709,16 +727,16 @@
 
 	var ghosts = __webpack_require__(6).ghosts;
 	var Ghost = __webpack_require__(20);
+	var shield = __webpack_require__(4);
 	
 	var attacker = {
 	  rate: 240,
 	  deployGhost: function () {
 	    var dice = Math.round(Math.random()*attacker.rate);
-	    if (dice < 2) {
+	    if (dice < 2 && shield.health > -4) {
 	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
 	    }
 	    if (this.rate < 180 && Math.random()*1600 < 4) {
-	      console.log("GO");
 	      this.burst();
 	    }
 	  },
