@@ -1,4 +1,18 @@
-mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, powerups, Missile) {
+var mover = function (canvas, a) {
+
+  var shield = require('./objects/shield.js');
+  var player = require('./objects/player.js');
+  var carrier = require('./objects/carrier.js');
+
+  var Missile = require('./constructors/missile.js');
+
+  var rockets = require('./objectArrays.js').rockets;
+  var explosions = require('./objectArrays.js').explosions;
+  var missiles = require('./objectArrays.js').missiles;
+  var ghosts = require('./objectArrays.js').ghosts;
+  var lunamods = require('./objectArrays.js').lunamods;
+  var powerups = require('./objectArrays.js').powerups;
+
   a.movePlayer = function () {
     player.x += player.xspeed;
     player.angle += player.spin;
@@ -27,6 +41,25 @@ mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghos
           rocket.destroy();
           if (rocket.x > player.x-16 && rocket.x < player.x+16) {
             player.health -= 2;
+          }
+        }
+        if (rocket.type === "laser") {
+          rocket.checkLaser();
+          if (rocket.firingLaser) {rocket.firingLaser++;}
+          if (rocket.firingLaser && rocket.firingLaser>8) {
+            rocket.stopLaser();
+          }
+        }
+        if (rocket.type === "revolver") {
+          rocket.timer -= 5;
+          if (rocket.timer < 0 ) {
+            rocket.deployKoopashells();
+          }
+        }
+        if (rocket.type === "koopashell") {
+          rocket.timer -= 1;
+          if (rocket.timer < 0) {
+            rocket.destroy();
           }
         }
       }
@@ -74,10 +107,10 @@ mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghos
   a.movePowerups = function () {
     powerups.forEach(function (powerup) {
       if (powerup) {
-        if (powerup.y < 496) {
+        if (powerup.y < 490) {
           powerup.y += powerup.yspeed;
         } else {
-          powerup.y = 496;
+          powerup.y = 490;
         }
         if (powerup.yspeed < 4) {
           powerup.yspeed += powerup.yaccel;
@@ -85,6 +118,22 @@ mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghos
         powerup.playerCollide();
       }
     });
+  };
+
+  a.moveCarrier = function () {
+    carrier.x += carrier.xspeed;
+    if (carrier.x > 30000) {
+      carrier.xspeed = -4;
+      carrier.sprite = "carrier_9";
+      carrier.destroyed = false;
+      carrier.y = Math.random()*canvas.height/2+12;
+    } else if (carrier.x < -20000) {
+      carrier.xspeed = 4;
+      carrier.sprite = "carrier_3";
+      carrier.destroyed = false;
+      carrier.y = Math.random()*canvas.height/2+12;
+    }
+    carrier.rocketCollide();
   };
 
   a.moveLunamods = function () {

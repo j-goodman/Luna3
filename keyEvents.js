@@ -42,8 +42,9 @@ var keyEvents = function (document, player) {
     case 32: //space
       if (player.ready) { player.fire(); }
       break;
-    case 16: //SHIFT
+    case 16: //shift
       player.toggleRocket();
+      player.showCount = 1.8;
       while (player.ammoStore[player.ammoType] <= 0) {
         player.toggleRocket();
       }

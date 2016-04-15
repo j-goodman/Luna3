@@ -1,4 +1,18 @@
-drawer = function (canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, earth, sun, starfield, powerups, Explosion) {
+drawer = function (canvas, a) {
+var shield = require('./objects/shield.js');
+var player = require('./objects/player.js');
+var earth = require('./objects/earth.js');
+var sun = require('./objects/sun.js');
+var starfield = require('./objects/starfield.js');
+var carrier = require('./objects/carrier.js');
+var rockets = require('./objectArrays.js').rockets;
+var explosions = require('./objectArrays.js').explosions;
+var missiles = require('./objectArrays.js').missiles;
+var ghosts = require('./objectArrays.js').ghosts;
+var lunamods = require('./objectArrays.js').lunamods;
+var powerups = require('./objectArrays.js').powerups;
+
+var Explosion = require('./constructors/Explosion');
 
   a.drawSky = function () {
     starfield.forEach(function (star) {
@@ -38,6 +52,11 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
           earth.timer === explosion.time-170 ||
           earth.timer+120 === explosion.time) {
         explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
+        ghosts.forEach( function (ghost) {
+          if (ghost) {
+            ghost.destroy();
+          }
+        });
       }
     });
 
@@ -54,38 +73,51 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
     }
   };
 
-  a.drawMoon = function () {
-    a.fillStyle = "#e0e0e5";
-    a.fillRect(0, 500, canvas.width, 100);
+  a.drawCity = function () {
+    if (Math.random()*10+14<(24-shield.health)) {
+      a.globalAlpha = 0;
+    }
+
     a.fillStyle = shield.color;
     a.beginPath();
     a.arc(450, 500, 60, Math.PI, 0, false);
     a.fill();
 
     a.globalAlpha = 0;
-    if (sun.y > 400 && sun.y < 800) {
-      a.globalAlpha = 1;
+    if (sun.y > 400 && sun.y < 800) { a.globalAlpha = 1; }
+    if (sun.y > 600) { a.globalAlpha = 1-(sun.y-600)/300; }
+    if (sun.y < 400 && sun.y > 200) { a.globalAlpha = (sun.y-200)/200; }
+
+    if (Math.random()*10+14<(24-shield.health)) {
+      a.globalAlpha = 0;
     }
-    if (sun.y > 600) {
-      a.globalAlpha = 1-(sun.y-600)/300;
-    }
-    if (sun.y < 400 && sun.y > 200) {
-      a.globalAlpha = (sun.y-200)/200;
-    }
+
     a.fillStyle = "#ffbe00";
     a.beginPath();
     a.arc(450, 500, 60, Math.PI, 0, false);
     a.fill();
+
     a.globalAlpha = 1;
 
-    a.drawImage(document.getElementById("city"), 400, 452, 96, 48);
+    if (shield.health >= 0) {
+      a.drawImage(document.getElementById("city"), 400, 452, 96, 48);
+    } else if (shield.health > -12) {
+      a.drawImage(document.getElementById("ruins"), 400, 452, 96, 48);
+    }
+  };
+
+  a.drawMoon = function () {
+    a.fillStyle = "#e0e0e5";
+    a.fillRect(0, 500, canvas.width, 100);
   };
 
   a.drawPlayer = function () {
-    a.fillStyle = "#008080";
-    a.beginPath();
-    a.arc(player.x, player.y, 12, (player.angle+60)*DEGREES, (player.angle-60)*DEGREES, false);
-    a.fill();
+    a.save();
+    a.translate(player.x, player.y);
+    a.rotate((player.angle+90)*DEGREES);
+    a.translate(-16, -19);
+    a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
+    a.restore();
     a.drawImage(document.getElementById("chassis"), player.x-16, player.y-19, 32, 32);
   };
 
@@ -93,14 +125,36 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
   a.drawRockets = function () {
     rockets.forEach(function (rocket) {
       if (rocket) {
+
         a.save();
         a.translate(rocket.x, rocket.y);
         a.rotate(rocket.degrees*DEGREES);
         a.translate(-12, -12);
         a.drawImage(document.getElementById(rocket.sprite), 0, 0, 24, 24);
         a.restore();
+
+        if (rocket.type === "laser" && rocket.firingLaser) {
+          a.drawLaser(rocket);
+        }
       }
     });
+  };
+
+  a.drawLaser = function (rocket) {
+    a.globalAlpha = Math.round(Math.random());
+    a.strokeStyle = "orange";
+    a.lineWidth = 2;
+    a.beginPath();
+    a.moveTo(rocket.x, rocket.y);
+    a.lineTo(rocket.target.x, rocket.target.y);
+    a.stroke();
+    a.globalAlpha = 1;
+  };
+
+  a.drawCarrier = function () {
+    if (!carrier.destroyed) {
+      a.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
+    }
   };
 
   a.drawExplosions = function () {
@@ -133,9 +187,6 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
         a.translate(-12, -12);
         a.drawImage(document.getElementById("3_missile"), 0, 0, 32, 32);
         a.restore();
-        // a.fillStyle = "white";
-        // a.font = "10px Courier";
-        // a.fillText(missile.idx, missile.x-16, missile.y-16);
       }
     });
   };
@@ -162,7 +213,12 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
   a.drawPowerups = function () {
     powerups.forEach(function (powerup) {
       if (powerup) {
-        a.drawImage(document.getElementById(powerup.sprite), powerup.x-14, powerup.y-14, 28, 28);
+        a.save();
+        a.translate(powerup.x, powerup.y);
+        a.rotate(270*DEGREES);
+        a.translate(-12, -12);
+        a.drawImage(document.getElementById(powerup.sprite), 0, 0, 28, 28);
+        a.restore();
       }
     });
   };
@@ -183,6 +239,10 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
       ammoSprite = "3_magnet";
     } else if (player.ammoType === "clusterbomb") {
       ammoSprite = "3_clusterbomb";
+    } else if (player.ammoType === "laser") {
+      ammoSprite = "3_laser";
+    } else if (player.ammoType === "revolver") {
+      ammoSprite = "3_revolver";
     }
     a.fillStyle = "white";
     a.font = "14px Courier";
@@ -200,11 +260,23 @@ drawer = function (canvas, a, shield, player, rockets, explosions, missiles, gho
     if (player.showShift > 0.02) {
       player.showShift -= 0.02;
     }
+    if (player.showCount > 0.02) {
+      player.showCount -= 0.02;
+    }
     a.globalAlpha = player.showShift;
-    a.strokeRect(91, 115, 53, 26);
+    a.strokeRect(106, 115, 53, 26);
     a.fillStyle = "white";
     a.font = "14px Courier";
-    a.fillText("SHIFT", 96, 132);
+    a.fillText("SHIFT", 111, 132);
+    a.globalAlpha = 1;
+
+    a.font = "18px Courier";
+    a.globalAlpha = player.showCount;
+    var count = player.ammoStore[player.ammoType];
+    if (player.ammoType === "rocket") {
+      count = "∞";
+    }
+    a.fillText(count, 85, 133);
     a.globalAlpha = 1;
 
     a.drawImage(document.getElementById("healthbar"), 0, 100, 100, 400);

@@ -51,331 +51,46 @@
 	DEGREES = (Math.PI / 180);
 	RADIANS = (180 / Math.PI);
 	
-	var shield = {
-	  color: "#ffffff",
-	  health: 24
-	};
+	var shield = __webpack_require__(4);
+	var attacker = __webpack_require__(5);
+	var player = __webpack_require__(7);
+	var earth = __webpack_require__(10);
+	var sun = __webpack_require__(11);
+	var starfield = __webpack_require__(12);
+	var carrier = __webpack_require__(18);
 	
-	var attacker = {
-	  rate: 240
-	};
+	var Rocket = __webpack_require__(8);
+	var Magnet = __webpack_require__(13);
+	var Clusterbomb = __webpack_require__(14);
+	var Revolver = __webpack_require__(15);
+	var Laser = __webpack_require__(16);
 	
-	var player = {
-	  x: 300,
-	  y: 482,
-	  mobile: true,
-	  health: 12,
-	  spin: 0,
-	  angle: 270,
-	  xspeed: 0,
-	  ready: false,
-	  power: 16,
-	  score: 0,
-	  ammoIndex: 0,
-	  ammoType: "rocket",
-	  showShift: 0,
-	  ammoStore: {"rocket": 2},
-	  cooldown: 0,
-	  overheat: 0,
-	  fire: function (x, y, direction, speed) {
-	    if (player.ammoType === "rocket") {
-	      rockets.push(new Rocket(x, y, direction, speed, rockets.length));
-	    } else if (player.ammoType === "magnet") {
-	      rockets.push(new Magnet(x, y, direction, speed, rockets.length));
-	    } else if (player.ammoType === "clusterbomb") {
-	      rockets.push(new Clusterbomb(x, y, direction, speed, rockets.length));
-	    }
-	    player.ammoStore[player.ammoType] -= 1;
-	    if (player.ammoStore[player.ammoType] <= 0) {
-	      player.toggleRocket();
-	    }
-	  },
-	  toggleRocket: function () {
-	    if (player.ammoIndex+1 === Object.keys(player.ammoStore).length) {
-	      player.ammoIndex = 0;
-	    } else {
-	      player.ammoIndex += 1;
-	    }
-	    player.ammoType = Object.keys(player.ammoStore)[player.ammoIndex];
-	  }
-	};
+	var Explosion = __webpack_require__(19);
+	var Powerup = __webpack_require__(21);
 	
-	var earth = {
-	  y: 600,
-	  timer: 0,
-	  explosions: [{time: 3000, x: 60, y: 200},
-	               {time: 3060, x: 80, y: 60},
-	               {time: 3070, x: 160, y: 10},
-	               {time: 3090, x: 50, y: 180},
-	               {time: 3150, x: 200, y: 80},
-	               {time: 3160, x: 90, y: 120},
-	               {time: 3200, x: 90, y: 90},
-	               {time: 3220, x: 60, y: 100},
-	               {time: 3260, x: 80, y: 30},
-	               {time: 3360, x: 160, y: 10},
-	               {time: 3380, x: 50, y: 180},
-	               {time: 3420, x: 200, y: 80},
-	               {time: 3430, x: 90, y: 120},
-	               {time: 3460, x: 110, y: 140},
-	               {time: 3480, x: 100, y: 130},
-	               {time: 3490, x: 100, y: 140}, ]
-	};
+	var Missile = __webpack_require__(17);
+	var Ghost = __webpack_require__(20);
 	
-	var sun = {
-	  y: -400
-	};
+	var Lunamod = __webpack_require__(22);
 	
-	var starfield = [];
-	
-	for (var i = 0; i < 100; i++) {
-	  var randX = Math.round(Math.random()*canvas.width);
-	  var randY = Math.round(Math.random()*canvas.width);
-	  var rad = Math.round(Math.random()*0.6+1);
-	  starfield.push([randX, randY, rad]);
-	}
-	
-	var rockets = [];
-	var explosions = [];
-	var missiles = [];
-	var ghosts = [];
-	var lunamods = [];
-	var powerups = [];
-	
-	var Rocket = function (x, y, degrees, power, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.type = "rocket";
-	  this.sprite = "3_rocket";
-	  this.yaccel = 0.25;
-	  this.idx = idx;
-	  this.degrees = degrees;
-	  this.power = power;
-	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
-	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
-	  this.destroy = function () {
-	    a.fillStyle = "#ffffff";
-	    a.beginPath();
-	    a.arc(this.x, this.y-16, 14, 0, 360*DEGREES, false);
-	    a.fill();
-	    rockets[idx] = undefined;
-	  };
-	};
-	
-	var Magnet = function (x, y, degrees, power, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.type = "magnet";
-	  this.sprite = "3_magnet";
-	  this.yaccel = 0.25;
-	  this.idx = idx;
-	  this.degrees = degrees;
-	  this.power = power;
-	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
-	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
-	  this.destroy = function () {
-	    rockets[idx] = undefined;
-	  };
-	};
-	
-	var Clusterbomb = function (x, y, degrees, power, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.type = "clusterbomb";
-	  this.sprite = "3_clusterbomb";
-	  this.yaccel = 0.25;
-	  this.idx = idx;
-	  this.degrees = degrees;
-	  this.power = power;
-	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
-	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
-	  this.destroy = function () {
-	    rockets[idx] = undefined;
-	    for (var i=0; i < 12; i++) {
-	      rockets.push(new Rocket(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
-	    }
-	    if (Math.random() < 0.5) {
-	      rockets.push(new Clusterbomb(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
-	    }
-	  }.bind(this);
-	};
-	
-	var Missile = function (x, y, xspeed, yspeed, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.xspeed = xspeed;
-	  this.yspeed = yspeed;
-	  this.idx = idx;
-	  this.degrees = Math.atan(yspeed/xspeed)*RADIANS;
-	  if (this.degrees < 0) {this.degrees+=180;}
-	  this.yaccel = 0;
-	  this.xaccel = 0;
-	  this.destroy = function () {
-	    missiles[this.idx] = undefined;
-	    explosions.push(new Explosion(this.x, this.y, explosions.length));
-	    if (attacker.rate > 120) {
-	      attacker.rate -= 1;
-	    }
-	  };
-	  this.rocketCollide = function () {
-	    rockets.forEach(function (rocket, idx) {
-	      if (rocket) {
-	        if ((rocket.x > this.x-19 && rocket.x < this.x+19) &&
-	        (rocket.y > this.y-19 && rocket.y < this.y+19)) {
-	          player.score += 5;
-	          this.destroy();
-	          if (rocket.type === "clusterbomb") {
-	            rockets[idx].destroy();
-	          }
-	        }
-	        if (rocket.type === "magnet") {
-	          if (this.x > rocket.x) {
-	            this.xaccel = -0.05;
-	          } else {
-	            this.xaccel = 0.05;
-	          }
-	          if (this.y > rocket.y) {
-	            this.yaccel = -0.05;
-	          } else {
-	            this.yaccel = 0.05;
-	          }
-	        }
-	      }
-	    }.bind(this));
-	  };
-	  this.clock = function () {
-	    var clock;
-	    if (this.degrees >= 0 & this.degrees < 36) { clock = 4; }
-	    else if (this.degrees >= 36 & this.degrees < 72) { clock = 5; }
-	    else if (this.degrees >= 72 & this.degrees < 108) { clock = 6; }
-	    else if (this.degrees >= 108 & this.degrees < 144) { clock = 7; }
-	    else if (this.degrees >= 144 & this.degrees < 180) { clock = 8; }
-	    else {clock = 6;}
-	    return clock;
-	  }.bind(this);
-	};
-	
-	var Explosion = function (x, y, index) {
-	  this.x = x;
-	  this.y = y;
-	  this.age = 0;
-	  this.dice = 6;
-	  this.destroy = function () {
-	    explosions.splice(this.index, 1);
-	  };
-	};
-	
-	var Ghost = function (x, y, degrees, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.power = 2;
-	  this.idx = idx;
-	  this.degrees = degrees;
-	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
-	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
-	  this.yaccel = 0;
-	  this.deploy = function () {
-	    this.x += (Math.random()*120)-60;
-	    missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
-	    ghosts.splice(this.index, 1);
-	  };
-	  this.destroy = function () {
-	    ghosts[this.idx] = undefined;
-	  };
-	};
-	
-	var Powerup = function (x, y, type, sprite, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.idx = idx;
-	  this.type = type;
-	  this.sprite = sprite;
-	  this.yspeed = Math.random()*(-12);
-	  this.yaccel = 0.2;
-	  this.playerCollide = function () {
-	    if ((player.x > this.x-19 && player.x < this.x+19) &&
-	    (player.y > this.y-19 && player.y < this.y+19)) {
-	      if (player.score > 4) { player.score -= 5; }
-	      this.destroy();
-	    }
-	  };
-	  this.destroy = function () {
-	    if (player.ammoStore[this.type]) {
-	      player.ammoStore[this.type] += 1;
-	    } else {
-	      player.showShift = 3;
-	      player.ammoStore[this.type] = 1;
-	    }
-	    powerups[this.idx] = undefined;
-	  };
-	};
-	
-	var Lunamod = function (x, y, idx) {
-	  this.x = x;
-	  this.y = y;
-	  this.yspeed = 0;
-	  this.xspeed = 0;
-	  this.yaccel = 0;
-	  this.xaccel = 0;
-	  this.hoverHeight = 200;
-	  this.cargo = "magnet-rocket";
-	  this.ammo = 11;
-	  this.rocketCollide = function () {
-	    rockets.forEach(function (rocket) {
-	      if (rocket) {
-	        if ((rocket.x > this.x-32 && rocket.x < this.x+32) &&
-	        (rocket.y < this.y+32 && rocket.y > this.y-32)) {
-	          player.score += 50;
-	          this.destroy();
-	        }
-	      }
-	    }.bind(this));
-	  };
-	  this.destroy = function () {
-	    if (this.hoverHeight < 360) {
-	      this.hoverHeight += 20;
-	      this.y += 20;
-	      explosions.push(new Explosion(this.x, this.y, explosions.length));
-	    } else {
-	      var dice = Math.random();
-	      for (i=0; i < dice*6.25; i++) {
-	        if (dice > 0.5) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length));
-	        } else {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length));
-	        }
-	        dice += 0.5;
-	        if (dice>1) {dice--;}
-	      }
-	      explosions.push(new Explosion(this.x, this.y, explosions.length));
-	      explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
-	      explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
-	      this.ammo = 11;
-	      this.hoverHeight = 200;
-	      this.x = 30000;
-	    }
-	  };
-	};
-	
-	a.deployGhost = function () {
-	  var dice = Math.round(Math.random()*attacker.rate);
-	  if (dice < 2) {
-	    ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
-	  }
-	};
+	var objectArrays = __webpack_require__(6);
 	
 	var keyEvents = __webpack_require__(1);
 	keyEvents(document, player);
 	
 	var drawer = __webpack_require__(2);
-	drawer(canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, earth, sun, starfield, powerups, Explosion);
+	drawer(canvas, a);
 	
 	var mover = __webpack_require__(3);
-	mover(canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, powerups, Missile);
+	mover(canvas, a);
 	
-	ghosts.push(new Ghost(450, 500, 240, ghosts.length));
-	ghosts.push(new Ghost(450, 500, 300, ghosts.length));
-	lunamods.push(new Lunamod(33400, 80, lunamods.length));
-	powerups.push(new Powerup(Math.random()*canvas.width, -2000, "clusterbomb", "3_clusterbomb", powerups.length));
+	objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
+	objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
+	objectArrays.lunamods.push(new Lunamod(38000, 80, objectArrays.lunamods.length));
+	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
+	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
+	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
+	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
 	
 	  setInterval(function() {
 	    a.clearRect(0, 0, canvas.width, canvas.height);
@@ -384,9 +99,7 @@
 	
 	    a.drawSky();
 	
-	    a.drawMoon();
-	    a.movePlayer();
-	    a.drawPlayer();
+	    a.drawCity();
 	
 	    a.moveRockets();
 	    a.drawRockets();
@@ -395,14 +108,24 @@
 	    a.drawMissiles();
 	    a.moveMissiles();
 	
-	    a.deployGhost();
+	    attacker.deployGhost();
 	    a.moveGhosts();
+	
+	    a.drawCarrier();
+	    a.moveCarrier();
 	
 	    a.drawLunamods();
 	    a.moveLunamods();
 	
+	    a.moveCarrier();
+	
 	    a.drawPowerups();
 	    a.movePowerups();
+	
+	    a.movePlayer();
+	    a.drawPlayer();
+	
+	    a.drawMoon();
 	
 	    a.drawHealthBar();
 	
@@ -458,8 +181,9 @@
 	    case 32: //space
 	      if (player.ready) { player.fire(); }
 	      break;
-	    case 16: //SHIFT
+	    case 16: //shift
 	      player.toggleRocket();
+	      player.showCount = 1.8;
 	      while (player.ammoStore[player.ammoType] <= 0) {
 	        player.toggleRocket();
 	      }
@@ -473,9 +197,23 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	drawer = function (canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, earth, sun, starfield, powerups, Explosion) {
+	drawer = function (canvas, a) {
+	var shield = __webpack_require__(4);
+	var player = __webpack_require__(7);
+	var earth = __webpack_require__(10);
+	var sun = __webpack_require__(11);
+	var starfield = __webpack_require__(12);
+	var carrier = __webpack_require__(18);
+	var rockets = __webpack_require__(6).rockets;
+	var explosions = __webpack_require__(6).explosions;
+	var missiles = __webpack_require__(6).missiles;
+	var ghosts = __webpack_require__(6).ghosts;
+	var lunamods = __webpack_require__(6).lunamods;
+	var powerups = __webpack_require__(6).powerups;
+	
+	var Explosion = __webpack_require__(23);
 	
 	  a.drawSky = function () {
 	    starfield.forEach(function (star) {
@@ -515,6 +253,11 @@
 	          earth.timer === explosion.time-170 ||
 	          earth.timer+120 === explosion.time) {
 	        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
+	        ghosts.forEach( function (ghost) {
+	          if (ghost) {
+	            ghost.destroy();
+	          }
+	        });
 	      }
 	    });
 	
@@ -531,38 +274,51 @@
 	    }
 	  };
 	
-	  a.drawMoon = function () {
-	    a.fillStyle = "#e0e0e5";
-	    a.fillRect(0, 500, canvas.width, 100);
+	  a.drawCity = function () {
+	    if (Math.random()*10+14<(24-shield.health)) {
+	      a.globalAlpha = 0;
+	    }
+	
 	    a.fillStyle = shield.color;
 	    a.beginPath();
 	    a.arc(450, 500, 60, Math.PI, 0, false);
 	    a.fill();
 	
 	    a.globalAlpha = 0;
-	    if (sun.y > 400 && sun.y < 800) {
-	      a.globalAlpha = 1;
+	    if (sun.y > 400 && sun.y < 800) { a.globalAlpha = 1; }
+	    if (sun.y > 600) { a.globalAlpha = 1-(sun.y-600)/300; }
+	    if (sun.y < 400 && sun.y > 200) { a.globalAlpha = (sun.y-200)/200; }
+	
+	    if (Math.random()*10+14<(24-shield.health)) {
+	      a.globalAlpha = 0;
 	    }
-	    if (sun.y > 600) {
-	      a.globalAlpha = 1-(sun.y-600)/300;
-	    }
-	    if (sun.y < 400 && sun.y > 200) {
-	      a.globalAlpha = (sun.y-200)/200;
-	    }
+	
 	    a.fillStyle = "#ffbe00";
 	    a.beginPath();
 	    a.arc(450, 500, 60, Math.PI, 0, false);
 	    a.fill();
+	
 	    a.globalAlpha = 1;
 	
-	    a.drawImage(document.getElementById("city"), 400, 452, 96, 48);
+	    if (shield.health >= 0) {
+	      a.drawImage(document.getElementById("city"), 400, 452, 96, 48);
+	    } else if (shield.health > -12) {
+	      a.drawImage(document.getElementById("ruins"), 400, 452, 96, 48);
+	    }
+	  };
+	
+	  a.drawMoon = function () {
+	    a.fillStyle = "#e0e0e5";
+	    a.fillRect(0, 500, canvas.width, 100);
 	  };
 	
 	  a.drawPlayer = function () {
-	    a.fillStyle = "#008080";
-	    a.beginPath();
-	    a.arc(player.x, player.y, 12, (player.angle+60)*DEGREES, (player.angle-60)*DEGREES, false);
-	    a.fill();
+	    a.save();
+	    a.translate(player.x, player.y);
+	    a.rotate((player.angle+90)*DEGREES);
+	    a.translate(-16, -19);
+	    a.drawImage(document.getElementById("launcher"), 0, 0, 32, 32);
+	    a.restore();
 	    a.drawImage(document.getElementById("chassis"), player.x-16, player.y-19, 32, 32);
 	  };
 	
@@ -570,14 +326,36 @@
 	  a.drawRockets = function () {
 	    rockets.forEach(function (rocket) {
 	      if (rocket) {
+	
 	        a.save();
 	        a.translate(rocket.x, rocket.y);
 	        a.rotate(rocket.degrees*DEGREES);
 	        a.translate(-12, -12);
 	        a.drawImage(document.getElementById(rocket.sprite), 0, 0, 24, 24);
 	        a.restore();
+	
+	        if (rocket.type === "laser" && rocket.firingLaser) {
+	          a.drawLaser(rocket);
+	        }
 	      }
 	    });
+	  };
+	
+	  a.drawLaser = function (rocket) {
+	    a.globalAlpha = Math.round(Math.random());
+	    a.strokeStyle = "orange";
+	    a.lineWidth = 2;
+	    a.beginPath();
+	    a.moveTo(rocket.x, rocket.y);
+	    a.lineTo(rocket.target.x, rocket.target.y);
+	    a.stroke();
+	    a.globalAlpha = 1;
+	  };
+	
+	  a.drawCarrier = function () {
+	    if (!carrier.destroyed) {
+	      a.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
+	    }
 	  };
 	
 	  a.drawExplosions = function () {
@@ -610,9 +388,6 @@
 	        a.translate(-12, -12);
 	        a.drawImage(document.getElementById("3_missile"), 0, 0, 32, 32);
 	        a.restore();
-	        // a.fillStyle = "white";
-	        // a.font = "10px Courier";
-	        // a.fillText(missile.idx, missile.x-16, missile.y-16);
 	      }
 	    });
 	  };
@@ -639,7 +414,12 @@
 	  a.drawPowerups = function () {
 	    powerups.forEach(function (powerup) {
 	      if (powerup) {
-	        a.drawImage(document.getElementById(powerup.sprite), powerup.x-14, powerup.y-14, 28, 28);
+	        a.save();
+	        a.translate(powerup.x, powerup.y);
+	        a.rotate(270*DEGREES);
+	        a.translate(-12, -12);
+	        a.drawImage(document.getElementById(powerup.sprite), 0, 0, 28, 28);
+	        a.restore();
 	      }
 	    });
 	  };
@@ -660,6 +440,10 @@
 	      ammoSprite = "3_magnet";
 	    } else if (player.ammoType === "clusterbomb") {
 	      ammoSprite = "3_clusterbomb";
+	    } else if (player.ammoType === "laser") {
+	      ammoSprite = "3_laser";
+	    } else if (player.ammoType === "revolver") {
+	      ammoSprite = "3_revolver";
 	    }
 	    a.fillStyle = "white";
 	    a.font = "14px Courier";
@@ -677,11 +461,23 @@
 	    if (player.showShift > 0.02) {
 	      player.showShift -= 0.02;
 	    }
+	    if (player.showCount > 0.02) {
+	      player.showCount -= 0.02;
+	    }
 	    a.globalAlpha = player.showShift;
-	    a.strokeRect(91, 115, 53, 26);
+	    a.strokeRect(106, 115, 53, 26);
 	    a.fillStyle = "white";
 	    a.font = "14px Courier";
-	    a.fillText("SHIFT", 96, 132);
+	    a.fillText("SHIFT", 111, 132);
+	    a.globalAlpha = 1;
+	
+	    a.font = "18px Courier";
+	    a.globalAlpha = player.showCount;
+	    var count = player.ammoStore[player.ammoType];
+	    if (player.ammoType === "rocket") {
+	      count = "∞";
+	    }
+	    a.fillText(count, 85, 133);
 	    a.globalAlpha = 1;
 	
 	    a.drawImage(document.getElementById("healthbar"), 0, 100, 100, 400);
@@ -696,9 +492,23 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	mover = function (canvas, a, shield, player, rockets, explosions, missiles, ghosts, lunamods, powerups, Missile) {
+	var mover = function (canvas, a) {
+	
+	  var shield = __webpack_require__(4);
+	  var player = __webpack_require__(7);
+	  var carrier = __webpack_require__(18);
+	
+	  var Missile = __webpack_require__(17);
+	
+	  var rockets = __webpack_require__(6).rockets;
+	  var explosions = __webpack_require__(6).explosions;
+	  var missiles = __webpack_require__(6).missiles;
+	  var ghosts = __webpack_require__(6).ghosts;
+	  var lunamods = __webpack_require__(6).lunamods;
+	  var powerups = __webpack_require__(6).powerups;
+	
 	  a.movePlayer = function () {
 	    player.x += player.xspeed;
 	    player.angle += player.spin;
@@ -727,6 +537,25 @@
 	          rocket.destroy();
 	          if (rocket.x > player.x-16 && rocket.x < player.x+16) {
 	            player.health -= 2;
+	          }
+	        }
+	        if (rocket.type === "laser") {
+	          rocket.checkLaser();
+	          if (rocket.firingLaser) {rocket.firingLaser++;}
+	          if (rocket.firingLaser && rocket.firingLaser>8) {
+	            rocket.stopLaser();
+	          }
+	        }
+	        if (rocket.type === "revolver") {
+	          rocket.timer -= 5;
+	          if (rocket.timer < 0 ) {
+	            rocket.deployKoopashells();
+	          }
+	        }
+	        if (rocket.type === "koopashell") {
+	          rocket.timer -= 1;
+	          if (rocket.timer < 0) {
+	            rocket.destroy();
 	          }
 	        }
 	      }
@@ -774,10 +603,10 @@
 	  a.movePowerups = function () {
 	    powerups.forEach(function (powerup) {
 	      if (powerup) {
-	        if (powerup.y < 496) {
+	        if (powerup.y < 490) {
 	          powerup.y += powerup.yspeed;
 	        } else {
-	          powerup.y = 496;
+	          powerup.y = 490;
 	        }
 	        if (powerup.yspeed < 4) {
 	          powerup.yspeed += powerup.yaccel;
@@ -785,6 +614,22 @@
 	        powerup.playerCollide();
 	      }
 	    });
+	  };
+	
+	  a.moveCarrier = function () {
+	    carrier.x += carrier.xspeed;
+	    if (carrier.x > 30000) {
+	      carrier.xspeed = -4;
+	      carrier.sprite = "carrier_9";
+	      carrier.destroyed = false;
+	      carrier.y = Math.random()*canvas.height/2+12;
+	    } else if (carrier.x < -20000) {
+	      carrier.xspeed = 4;
+	      carrier.sprite = "carrier_3";
+	      carrier.destroyed = false;
+	      carrier.y = Math.random()*canvas.height/2+12;
+	    }
+	    carrier.rocketCollide();
 	  };
 	
 	  a.moveLunamods = function () {
@@ -844,6 +689,670 @@
 	};
 	
 	module.exports = mover;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	var shield = {
+	  color: "#ffffff",
+	  health: 24
+	};
+	
+	module.exports = shield;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ghosts = __webpack_require__(6).ghosts;
+	var Ghost = __webpack_require__(20);
+	
+	var attacker = {
+	  rate: 240,
+	  deployGhost: function () {
+	    var dice = Math.round(Math.random()*attacker.rate);
+	    if (dice < 2) {
+	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
+	    }
+	    if (this.rate < 180 && Math.random()*1600 < 4) {
+	      console.log("GO");
+	      this.burst();
+	    }
+	  },
+	  burst: function () {
+	    var direction = (Math.random()*4)*30+210;
+	    for (var i=0; i<12; i++) {
+	      ghosts.push(new Ghost(450, 500, (direction+Math.random()*45)-22.5, ghosts.length));
+	    }
+	  }
+	};
+	
+	module.exports = attacker;
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	var objectArrays = {
+	  rockets: [],
+	  explosions: [],
+	  missiles: [],
+	  ghosts: [],
+	  lunamods: [],
+	  powerups: [],
+	};
+	
+	module.exports = objectArrays;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var rockets = __webpack_require__(6).rockets;
+	var Rocket = __webpack_require__(8);
+	var Magnet = __webpack_require__(13);
+	var Clusterbomb = __webpack_require__(14);
+	var Laser = __webpack_require__(16);
+	var Revolver = __webpack_require__(15);
+	
+	var player = {
+	  x: (Math.random()*600)+150,
+	  y: 488,
+	  mobile: false,
+	  health: 12,
+	  spin: 0,
+	  angle: 270,
+	  xspeed: 0,
+	  ready: false,
+	  power: 16,
+	  score: 0,
+	  ammoIndex: 0,
+	  ammoType: "rocket",
+	  showShift: 0,
+	  showCount: 0,
+	  ammoStore: {"rocket": 2},
+	  cooldown: 0,
+	  overheat: 0,
+	  hover: -1,
+	  fire: function (x, y, direction, speed) {
+	    if (player.ammoType === "rocket") {
+	      rockets.push(new Rocket(x, y, direction, speed, rockets.length));
+	    } else if (player.ammoType === "magnet") {
+	      rockets.push(new Magnet(x, y, direction, speed, rockets.length));
+	    } else if (player.ammoType === "clusterbomb") {
+	      rockets.push(new Clusterbomb(x, y, direction, speed, rockets.length));
+	    } else if (player.ammoType === "laser") {
+	      rockets.push(new Laser(x, y, direction, speed, rockets.length));
+	    } else if (player.ammoType === "revolver") {
+	      rockets.push(new Revolver(x, y, direction, speed, rockets.length));
+	    }
+	    player.ammoStore[player.ammoType] -= 1;
+	    if (player.ammoStore[player.ammoType] <= 0) {
+	      player.toggleRocket();
+	    }
+	  },
+	  toggleRocket: function () {
+	    if (player.ammoIndex+1 === Object.keys(player.ammoStore).length) {
+	      player.ammoIndex = 0;
+	    } else {
+	      player.ammoIndex += 1;
+	    }
+	    player.ammoType = Object.keys(player.ammoStore)[player.ammoIndex];
+	  }
+	};
+	
+	module.exports = player;
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var smallExplosion = __webpack_require__(9);
+	var rockets = __webpack_require__(6).rockets;
+	
+	var Rocket = function (x, y, degrees, power, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.type = "rocket";
+	  this.sprite = "3_rocket";
+	  this.yaccel = 0.25;
+	  this.idx = idx;
+	  this.degrees = degrees;
+	  this.power = power;
+	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
+	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
+	  this.destroy = function () {
+	    rockets[idx] = undefined;
+	    smallExplosion(this);
+	  };
+	};
+	
+	Rocket.prototype.destroy = function () {
+	
+	};
+	
+	module.exports = Rocket;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	var smallExplosion = function (source) {
+	  var canvas = document.getElementById("screen"),
+	    a = canvas.getContext("2d");
+	    
+	  a.fillStyle = "#ffffff";
+	  a.beginPath();
+	  a.arc(source.x, source.y-16, 14, 0, 360*DEGREES, false);
+	  a.fill();
+	};
+	
+	module.exports = smallExplosion;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	var earth = {
+	  y: 600,
+	  timer: 0,
+	  explosions: [{time: 3000, x: 60, y: 200},
+	               {time: 3060, x: 80, y: 60},
+	               {time: 3070, x: 160, y: 10},
+	               {time: 3090, x: 50, y: 180},
+	               {time: 3150, x: 200, y: 80},
+	               {time: 3160, x: 90, y: 120},
+	               {time: 3200, x: 90, y: 90},
+	               {time: 3220, x: 60, y: 100},
+	               {time: 3260, x: 80, y: 30},
+	               {time: 3360, x: 160, y: 10},
+	               {time: 3380, x: 50, y: 180},
+	               {time: 3420, x: 200, y: 80},
+	               {time: 3430, x: 90, y: 120},
+	               {time: 3460, x: 110, y: 140},
+	               {time: 3480, x: 100, y: 130},
+	               {time: 3490, x: 100, y: 140}, ]
+	};
+	
+	module.exports = earth;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	var sun = {
+	  y: -400
+	};
+	
+	module.exports = sun;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	starfield = [];
+	
+	for (var i = 0; i < 100; i++) {
+	  var randX = Math.round(Math.random()*900);
+	  var randY = Math.round(Math.random()*900);
+	  var rad = Math.round(Math.random()*0.6+1);
+	  starfield.push([randX, randY, rad]);
+	}
+	
+	module.exports = starfield;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Rocket = __webpack_require__(8);
+	
+	var Surrogate = function () {};
+	Surrogate.prototype = Rocket.prototype;
+	
+	var Magnet = function (x, y, degrees, power, idx) {
+	  Rocket.call(this, x, y, degrees, power, idx);
+	  this.type = "magnet";
+	  this.sprite = "3_magnet";
+	};
+	
+	Magnet.prototype = new Surrogate();
+	
+	module.exports = Magnet;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var smallExplosion = __webpack_require__(9);
+	var Rocket = __webpack_require__(8);
+	var rockets = __webpack_require__(6).rockets;
+	
+	var Surrogate = function () {};
+	Surrogate.prototype = Rocket.prototype;
+	
+	var Clusterbomb = function (x, y, degrees, power, idx) {
+	  Rocket.call(this, x, y, degrees, power, idx);
+	  this.type = "clusterbomb";
+	  this.sprite = "3_clusterbomb";
+	  this.destroy = function () {
+	    smallExplosion(this);
+	    rockets[idx] = undefined;
+	    for (var i=0; i < 12; i++) {
+	      rockets.push(new Rocket(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+	    }
+	    if (Math.random() < 0.5) {
+	      rockets.push(new Clusterbomb(this.x, this.y, Math.random()*360, Math.random()*21, rockets.length));
+	    }
+	  }.bind(this);
+	};
+	
+	Clusterbomb.prototype = new Surrogate();
+	
+	module.exports = Clusterbomb;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Rocket = __webpack_require__(8);
+	var rockets = __webpack_require__(6).rockets;
+	
+	var Surrogate = function () {};
+	Surrogate.prototype = Rocket.prototype;
+	
+	var Revolver = function (x, y, degrees, power, idx) {
+	  Rocket.call(this, x, y, degrees, power, idx);
+	  this.type = "revolver";
+	  this.sprite = "3_revolver";
+	  this.timer = 30;
+	  this.deployKoopashells = function () {
+	    rockets.push(new Koopashell(this.x, this.y, 270+this.timer, (Math.sqrt(-this.timer)*2), rockets.length));
+	    rockets.push(new Koopashell(this.x, this.y, 0+this.timer, (Math.sqrt(-this.timer)*2), rockets.length));
+	    rockets.push(new Koopashell(this.x, this.y, 90+this.timer, (Math.sqrt(-this.timer)*2), rockets.length));
+	    rockets.push(new Koopashell(this.x, this.y, 180+this.timer, (Math.sqrt(-this.timer)*2), rockets.length));
+	  };
+	};
+	
+	Revolver.prototype = new Surrogate();
+	Revolver.prototype.constructor = Revolver;
+	
+	var Koopashell = function (x, y, degrees, power, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.timer = 3;
+	  this.type = "koopashell";
+	  this.sprite = "3_koopashell";
+	  this.yaccel = 0;
+	  this.idx = idx;
+	  this.degrees = degrees;
+	  this.power = power;
+	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
+	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
+	  this.destroy = function () {
+	    rockets[idx] = undefined;
+	  };
+	};
+	
+	module.exports = Revolver;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Rocket = __webpack_require__(8);
+	var missiles = __webpack_require__(6).missiles;
+	
+	var Surrogate = function () {};
+	Surrogate.prototype = Rocket.prototype;
+	
+	var Laser = function (x, y, degrees, power, idx) {
+	  Rocket.call(this, x, y, degrees, power, idx);
+	  this.type = "laser";
+	  this.sprite = "3_laser";
+	  this.target = null;
+	  this.checkLaser = function () {
+	    missiles.forEach(function (missile, idx) {
+	      if (missile) {
+	        if ((missile.x > this.x-120 && missile.x < this.x+120) &&
+	        (missile.y > this.y-120 && missile.y < this.y+120)) {
+	          this.fireLaser(missile);
+	        }
+	      }
+	    }.bind(this));
+	  };
+	  this.firingLaser = 0;
+	  this.fireLaser = function (missile) {
+	    this.firingLaser += 1;
+	    this.target = missile;
+	  };
+	  this.stopLaser = function () {
+	    this.firingLaser = 0;
+	    this.target.destroy();
+	  };
+	};
+	
+	Laser.prototype = new Surrogate();
+	
+	module.exports = Laser;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Explosion = __webpack_require__(19);
+	var Missile = __webpack_require__(17);
+	var player = __webpack_require__(7);
+	
+	var rockets = __webpack_require__(6).rockets;
+	var missiles = __webpack_require__(6).missiles;
+	var explosions = __webpack_require__(6).explosions;
+	var attacker = __webpack_require__(5);
+	
+	var Missile = function (x, y, xspeed, yspeed, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.xspeed = xspeed;
+	  this.yspeed = yspeed;
+	  this.idx = idx;
+	  this.degrees = Math.atan(yspeed/xspeed)*RADIANS;
+	  if (this.degrees < 0) {this.degrees+=180;}
+	  this.yaccel = 0;
+	  this.xaccel = 0;
+	  this.destroy = function () {
+	    missiles[this.idx] = undefined;
+	    explosions.push(new Explosion(this.x, this.y, explosions.length));
+	  };
+	  this.rocketCollide = function () {
+	    rockets.forEach(function (rocket, idx) {
+	      if (rocket) {
+	        if ((rocket.x > this.x-19 && rocket.x < this.x+19) &&
+	        (rocket.y > this.y-19 && rocket.y < this.y+19)) {
+	          player.score += 5;
+	          this.destroy();
+	          if (attacker.rate > 101) {
+	            attacker.rate -= 1;
+	          }
+	          if (rocket.type === "clusterbomb") {
+	            rocket.destroy();
+	          }
+	        }
+	        if (rocket.type === "magnet") {
+	          if (this.x > rocket.x) {
+	            this.xaccel = -0.05;
+	          } else {
+	            this.xaccel = 0.05;
+	          }
+	          if (this.y > rocket.y) {
+	            this.yaccel = -0.05;
+	          } else {
+	            this.yaccel = 0.05;
+	          }
+	        }
+	      }
+	    }.bind(this));
+	  };
+	  this.clock = function () {
+	    var clock;
+	    if (this.degrees >= 0 & this.degrees < 36) { clock = 4; }
+	    else if (this.degrees >= 36 & this.degrees < 72) { clock = 5; }
+	    else if (this.degrees >= 72 & this.degrees < 108) { clock = 6; }
+	    else if (this.degrees >= 108 & this.degrees < 144) { clock = 7; }
+	    else if (this.degrees >= 144 & this.degrees < 180) { clock = 8; }
+	    else {clock = 6;}
+	    return clock;
+	  }.bind(this);
+	};
+	
+	module.exports = Missile;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var rockets = __webpack_require__(6).rockets;
+	var powerups = __webpack_require__(6).powerups;
+	var missiles = __webpack_require__(6).missiles;
+	var explosions = __webpack_require__(6).explosions;
+	var player = __webpack_require__(7);
+	var Powerup = __webpack_require__(21);
+	var Missile = __webpack_require__(17);
+	var Explosion = __webpack_require__(19);
+	
+	var carrier = {
+	  x: -32000,
+	  y: 100,
+	  xspeed: 3,
+	  destroyed: false,
+	  sprite: "carrier_3",
+	  rocketCollide: function () {
+	    rockets.forEach(function (rocket, idx) {
+	      if (rocket) {
+	        if ((rocket.x > this.x-36 && rocket.x < this.x+36) &&
+	        (rocket.y > this.y-36 && rocket.y < this.y+36)) {
+	          player.score += 5;
+	          this.destroy();
+	          if (rocket.type === "clusterbomb") {
+	            rocket.destroy();
+	          }
+	        }
+	      }
+	    }.bind(this));
+	  },
+	  destroy: function () {
+	      for (var i=0; i<2; i++) {
+	        var dice = Math.random();
+	        this.destroyed = true;
+	        if (dice > 0.75) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "laser", "3_laser", powerups.length));
+	        } else if (dice > 0.5) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "magnet", "3_magnet", powerups.length));
+	        } else if (dice > 0.25) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "revolver", "3_revolver", powerups.length));
+	        } else {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length));
+	        }
+	        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
+	        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
+	      }
+	
+	      explosions.push(new Explosion(this.x, this.y, explosions.length));
+	      explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
+	      explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
+	
+	
+	      this.x = 30000;
+	
+	    }
+	};
+	
+	module.exports = carrier;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var explosions = __webpack_require__(6).explosions;
+	
+	var Explosion = function (x, y, index) {
+	  this.x = x;
+	  this.y = y;
+	  this.age = 0;
+	  this.dice = 6;
+	  this.destroy = function () {
+	    explosions.splice(this.index, 1);
+	  };
+	};
+	
+	module.exports = Explosion;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Missile = __webpack_require__(17);
+	var missiles = __webpack_require__(6).missiles;
+	var ghosts = __webpack_require__(6).ghosts;
+	
+	var Ghost = function (x, y, degrees, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.power = 2;
+	  this.idx = idx;
+	  this.degrees = degrees;
+	  this.xspeed = this.power * Math.cos((this.degrees)*DEGREES);
+	  this.yspeed = this.power * Math.sin((this.degrees)*DEGREES);
+	  this.yaccel = 0;
+	  this.deploy = function () {
+	    this.x += (Math.random()*120)-60;
+	    missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
+	    ghosts.splice(this.index, 1);
+	  };
+	  this.destroy = function () {
+	    ghosts[this.idx] = undefined;
+	  };
+	};
+	
+	module.exports = Ghost;
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var player = __webpack_require__(7);
+	var powerups = __webpack_require__(6).powerups;
+	
+	var Powerup = function (x, y, type, sprite, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.idx = idx;
+	  this.type = type;
+	  this.sprite = sprite;
+	  this.yspeed = Math.random()*(-12);
+	  this.yaccel = 0.2;
+	  this.playerCollide = function () {
+	    if ((player.x > this.x-19 && player.x < this.x+19) &&
+	    (player.y > this.y-19 && player.y < this.y+19)) {
+	      if (player.score > 4) { player.score -= 5; }
+	      this.destroy();
+	    }
+	  };
+	  this.destroy = function () {
+	    if (player.ammoStore[this.type]) {
+	      player.ammoStore[this.type] += 1;
+	    } else {
+	      player.showShift = 3;
+	      player.ammoStore[this.type] = 1;
+	    }
+	    powerups[this.idx] = undefined;
+	  };
+	};
+	
+	module.exports = Powerup;
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var rockets = __webpack_require__(6).rockets;
+	var explosions = __webpack_require__(6).explosions;
+	var powerups = __webpack_require__(6).powerups;
+	var Explosion = __webpack_require__(19);
+	var Powerup = __webpack_require__(21);
+	var player = __webpack_require__(7);
+	
+	var Lunamod = function (x, y, idx) {
+	  this.x = x;
+	  this.y = y;
+	  this.yspeed = 0;
+	  this.xspeed = 0;
+	  this.yaccel = 0;
+	  this.xaccel = 0;
+	  this.hoverHeight = 200;
+	  this.cargo = "magnet-rocket";
+	  this.ammo = 11;
+	  this.rocketCollide = function () {
+	    rockets.forEach(function (rocket) {
+	      if (rocket) {
+	        if ((rocket.x > this.x-32 && rocket.x < this.x+32) &&
+	        (rocket.y < this.y+32 && rocket.y > this.y-32)) {
+	          player.score += 50;
+	          this.destroy();
+	          if (rocket.type === "clusterbomb") { rocket.destroy(); }
+	        }
+	      }
+	    }.bind(this));
+	  };
+	  this.destroy = function () {
+	    if (this.hoverHeight < 360) {
+	      this.hoverHeight += 20;
+	      this.y += 20;
+	      explosions.push(new Explosion(this.x, this.y, explosions.length));
+	    } else {
+	      var dice = Math.random();
+	      for (i=0; i < dice*6.25; i++) {
+	        if (dice > 0.75) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "laser", "3_laser", powerups.length));
+	        } else if (dice > 0.5) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length));
+	        } else if (dice > 0.25) {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "revolver", "3_revolver", powerups.length));
+	        } else {
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length));
+	        }
+	        dice += 0.5;
+	        if (dice>1) {dice--;}
+	      }
+	      explosions.push(new Explosion(this.x, this.y, explosions.length));
+	      explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
+	      explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
+	      this.ammo = 11;
+	      this.hoverHeight = 200;
+	      this.x = 30000;
+	    }
+	  };
+	};
+	
+	module.exports = Lunamod;
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var explosions = __webpack_require__(6).explosions;
+	
+	var Explosion = function (x, y, index) {
+	  this.x = x;
+	  this.y = y;
+	  this.age = 0;
+	  this.dice = 6;
+	  this.destroy = function () {
+	    explosions.splice(this.index, 1);
+	  };
+	};
+	
+	module.exports = Explosion;
 
 
 /***/ }
