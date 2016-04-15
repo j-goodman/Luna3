@@ -4,6 +4,7 @@ var powerups = require('../objectArrays').powerups;
 var Explosion = require('./explosion.js');
 var Powerup = require('./powerup.js');
 var player = require('../objects/player.js');
+var lunamods = require('../objectArrays.js').lunamods;
 
 var Lunamod = function (x, y, idx) {
   this.x = x;
@@ -29,7 +30,7 @@ var Lunamod = function (x, y, idx) {
   this.destroy = function () {
     if (this.hoverHeight < 400) {
       this.hoverHeight += 40;
-      this.y += 20;
+      this.y += 48;
       explosions.push(new Explosion(this.x, this.y, explosions.length));
     } else {
       var dice = Math.random();
@@ -45,6 +46,9 @@ var Lunamod = function (x, y, idx) {
         }
         dice += 0.5;
         if (dice>1) {dice--;}
+      }
+      if (lunamods.length <= 1) {
+        lunamods.push(new Lunamod(-54000, 80, lunamods.length));
       }
       explosions.push(new Explosion(this.x, this.y, explosions.length));
       explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));

@@ -39,6 +39,10 @@ var player = {
     } else if (player.ammoType === "revolver") {
       rockets.push(new Revolver(x, y, direction, speed, rockets.length));
     }
+    // if (ammoStore[ammoType] === 0) {
+    //   ammoIndex = 0;
+    //   ammoType = "rocket";
+    // }
     player.ammoStore[player.ammoType] -= 1;
     if (player.ammoStore[player.ammoType] <= 0) {
       player.toggleRocket();

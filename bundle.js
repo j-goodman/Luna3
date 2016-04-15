@@ -86,7 +86,7 @@
 	
 	objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 	objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-	objectArrays.lunamods.push(new Lunamod(32000, 80, objectArrays.lunamods.length));
+	objectArrays.lunamods.push(new Lunamod(20000, 80, objectArrays.lunamods.length));
 	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
 	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
 	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
@@ -167,15 +167,15 @@
 	    if (dice < 2 && shield.health > -6 && this.start < 30) {
 	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
 	    }
-	    if (this.rate < 180 && Math.random()*1600 < 4) {
+	    if (Math.random()*4800 < 4) {
 	      this.burst();
 	    }
 	  },
 	  burst: function () {
 	    var direction = (Math.random()*4)*30+210;
-	    for (var i=0; i<12; i++) {
-	      ghosts.push(new Ghost(450, 500, (direction+Math.random()*45)-22.5, ghosts.length));
-	    }
+	    // for (var i=0; i<4; i++) {
+	      ghosts.push(new Ghost(450, 500, (direction+Math.random()*90)-45, ghosts.length));
+	    // }
 	  }
 	};
 	
@@ -218,7 +218,7 @@
 	  this.deploy = function () {
 	    this.x += (Math.random()*120)-60;
 	    missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
-	    ghosts.splice(this.index, 1);
+	    this.destroy();
 	  };
 	  this.destroy = function () {
 	    ghosts[this.idx] = undefined;
@@ -268,7 +268,7 @@
 	            this.destroy();
 	          }
 	          if (attacker.rate >= 88) {
-	            attacker.rate -= 1;
+	            attacker.rate -= 3;
 	          }
 	        }
 	        if (rocket.type === "magnet") {
@@ -365,6 +365,10 @@
 	    } else if (player.ammoType === "revolver") {
 	      rockets.push(new Revolver(x, y, direction, speed, rockets.length));
 	    }
+	    // if (ammoStore[ammoType] === 0) {
+	    //   ammoIndex = 0;
+	    //   ammoType = "rocket";
+	    // }
 	    player.ammoStore[player.ammoType] -= 1;
 	    if (player.ammoStore[player.ammoType] <= 0) {
 	      player.toggleRocket();
@@ -682,8 +686,6 @@
 	        } else {
 	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length));
 	        }
-	        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
-	        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
 	      }
 	
 	      explosions.push(new Explosion(this.x, this.y, explosions.length));
@@ -745,6 +747,7 @@
 	var Explosion = __webpack_require__(6);
 	var Powerup = __webpack_require__(18);
 	var player = __webpack_require__(7);
+	var lunamods = __webpack_require__(3).lunamods;
 	
 	var Lunamod = function (x, y, idx) {
 	  this.x = x;
@@ -770,7 +773,7 @@
 	  this.destroy = function () {
 	    if (this.hoverHeight < 400) {
 	      this.hoverHeight += 40;
-	      this.y += 20;
+	      this.y += 48;
 	      explosions.push(new Explosion(this.x, this.y, explosions.length));
 	    } else {
 	      var dice = Math.random();
@@ -786,6 +789,9 @@
 	        }
 	        dice += 0.5;
 	        if (dice>1) {dice--;}
+	      }
+	      if (lunamods.length <= 1) {
+	        lunamods.push(new Lunamod(-54000, 80, lunamods.length));
 	      }
 	      explosions.push(new Explosion(this.x, this.y, explosions.length));
 	      explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
@@ -955,9 +961,6 @@
 	          earth.timer === explosion.time-170 ||
 	          earth.timer+120 === explosion.time) {
 	        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
-	        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
-	        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
-	        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y+((Math.random()*40)-20), explosions.length));
 	        ghosts.forEach( function (ghost) {
 	          if (ghost) {
 	            ghost.destroy();
@@ -1155,18 +1158,36 @@
 	    } else if (player.ammoType === "revolver") {
 	      ammoSprite = "3_revolver";
 	    }
-	    a.fillStyle = "white";
-	    a.font = "14px Courier";
-	    var scoreString = player.score.toString();
-	    if (scoreString.length < 5) {
-	      for (var i = 5-player.score.toString().length; i > 0; i--) {
-	        scoreString = "0" + scoreString;
+	    if (shield.health >= 0) {
+	      a.fillStyle = "white";
+	      a.font = "14px Courier";
+	      var scoreString = player.score.toString();
+	      if (scoreString.length < 5) {
+	        for (var i = 5-player.score.toString().length; i > 0; i--) {
+	          scoreString = "0" + scoreString;
+	        }
 	      }
+	      a.strokeStyle = "white";
+	      a.lineWidth = 1;
+	      a.fillText(scoreString, 16, 165);
+	    } else {
+	      if (!player.finalScore) {
+	        player.finalScore = player.score;
+	      }
+	      var finalScoreString = player.finalScore.toString();
+	      if (finalScoreString.length < 5) {
+	        for (var j = 5-player.finalScore.toString().length; j > 0; j--) {
+	          finalScoreString = "0" + finalScoreString;
+	        }
+	      }
+	      a.fillRect(10, 144, 60, 30);
+	      a.fillStyle = "black";
+	      a.font = "14px Courier";
+	      a.strokeStyle = "white";
+	      a.lineWidth = 1;
+	      a.fillText(finalScoreString, 16, 165);
 	    }
 	
-	    a.strokeStyle = "white";
-	    a.lineWidth = 1;
-	    a.fillText(scoreString, 16, 165);
 	
 	    if (player.showShift > 0.02) {
 	      player.showShift -= 0.02;
@@ -1260,7 +1281,9 @@
 	      }
 	    } else {
 	      carrier.destroyed = true;
-	      lunamods[0].destroy();
+	      lunamods.forEach( function (lunamod) {
+	        lunamod.destroy();
+	      });
 	      powerups.forEach( function (powerup) {
 	        if (powerup) {
 	          powerup.destroy();
@@ -1407,6 +1430,11 @@
 	        if (dice < 8) {
 	          missiles.push(new Missile(lunamod.x, lunamod.y, 0, 6, missiles.length));
 	          lunamod.ammo -= 1;
+	          ghosts.forEach(function (ghost) {
+	            if (ghost && Math.random() < 0.2) {
+	              ghost.destroy();
+	            }
+	          });
 	        }
 	      }
 	      //RUN AWAY WHEN OUT OF AMMO

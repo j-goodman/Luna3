@@ -14,7 +14,7 @@ var Ghost = function (x, y, degrees, idx) {
   this.deploy = function () {
     this.x += (Math.random()*120)-60;
     missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
-    ghosts.splice(this.index, 1);
+    this.destroy();
   };
   this.destroy = function () {
     ghosts[this.idx] = undefined;

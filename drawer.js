@@ -84,9 +84,6 @@ var Explosion = require('./constructors/Explosion');
           earth.timer === explosion.time-170 ||
           earth.timer+120 === explosion.time) {
         explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
-        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
-        explosions.push(new Explosion(300+explosion.x+((Math.random()*40)-20), earth.y+explosion.y, explosions.length));
-        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y+((Math.random()*40)-20), explosions.length));
         ghosts.forEach( function (ghost) {
           if (ghost) {
             ghost.destroy();
@@ -284,18 +281,36 @@ var Explosion = require('./constructors/Explosion');
     } else if (player.ammoType === "revolver") {
       ammoSprite = "3_revolver";
     }
-    a.fillStyle = "white";
-    a.font = "14px Courier";
-    var scoreString = player.score.toString();
-    if (scoreString.length < 5) {
-      for (var i = 5-player.score.toString().length; i > 0; i--) {
-        scoreString = "0" + scoreString;
+    if (shield.health >= 0) {
+      a.fillStyle = "white";
+      a.font = "14px Courier";
+      var scoreString = player.score.toString();
+      if (scoreString.length < 5) {
+        for (var i = 5-player.score.toString().length; i > 0; i--) {
+          scoreString = "0" + scoreString;
+        }
       }
+      a.strokeStyle = "white";
+      a.lineWidth = 1;
+      a.fillText(scoreString, 16, 165);
+    } else {
+      if (!player.finalScore) {
+        player.finalScore = player.score;
+      }
+      var finalScoreString = player.finalScore.toString();
+      if (finalScoreString.length < 5) {
+        for (var j = 5-player.finalScore.toString().length; j > 0; j--) {
+          finalScoreString = "0" + finalScoreString;
+        }
+      }
+      a.fillRect(10, 144, 60, 30);
+      a.fillStyle = "black";
+      a.font = "14px Courier";
+      a.strokeStyle = "white";
+      a.lineWidth = 1;
+      a.fillText(finalScoreString, 16, 165);
     }
 
-    a.strokeStyle = "white";
-    a.lineWidth = 1;
-    a.fillText(scoreString, 16, 165);
 
     if (player.showShift > 0.02) {
       player.showShift -= 0.02;

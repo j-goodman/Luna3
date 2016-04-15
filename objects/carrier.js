@@ -38,8 +38,6 @@ var carrier = {
         } else {
           powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length));
         }
-        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
-        missiles.push(new Missile(this.x, this.y+24, (Math.random()*8)-4, 6, missiles.length));
       }
 
       explosions.push(new Explosion(this.x, this.y, explosions.length));
