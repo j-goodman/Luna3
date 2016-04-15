@@ -86,7 +86,9 @@ var Explosion = require('./constructors/Explosion');
         explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
         ghosts.forEach( function (ghost) {
           if (ghost) {
-            ghost.destroy();
+            if (ghost.idx%2) {
+              ghost.destroy();
+            }
           }
         });
       }
@@ -120,7 +122,7 @@ var Explosion = require('./constructors/Explosion');
     if (sun.y > 600) { a.globalAlpha = 1-(sun.y-600)/300; }
     if (sun.y < 400 && sun.y > 200) { a.globalAlpha = (sun.y-200)/200; }
 
-    if (Math.random()*10+14<(24-shield.health)) {
+    if (Math.random()*4+20<(24-shield.health)) {
       a.globalAlpha = 0;
     }
 
@@ -234,7 +236,9 @@ var Explosion = require('./constructors/Explosion');
         a.fillStyle = "#0000ff";
         a.beginPath();
         a.arc(ghost.x, ghost.y, 12, 0, 2*Math.PI, false);
+        a.globalAlpha = 0.4;
         a.fill();
+        a.globalAlpha = 1;
       }
     });
   };

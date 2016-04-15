@@ -34,7 +34,7 @@ var Missile = function (x, y, xspeed, yspeed, idx) {
             this.destroy();
           }
           if (attacker.rate >= 88) {
-            attacker.rate -= 3;
+            attacker.rate -= 7;
           }
         }
         if (rocket.type === "magnet") {

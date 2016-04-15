@@ -184,11 +184,6 @@ var mover = function (canvas, a) {
         if (dice < 8) {
           missiles.push(new Missile(lunamod.x, lunamod.y, 0, 6, missiles.length));
           lunamod.ammo -= 1;
-          ghosts.forEach(function (ghost) {
-            if (ghost && Math.random() < 0.2) {
-              ghost.destroy();
-            }
-          });
         }
       }
       //RUN AWAY WHEN OUT OF AMMO

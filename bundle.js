@@ -160,7 +160,7 @@
 	
 	var attacker = {
 	  start: 300,
-	  rate: 240,
+	  rate: 300,
 	  deployGhost: function () {
 	    this.start -= 1;
 	    var dice = Math.round(Math.random()*attacker.rate);
@@ -169,6 +169,9 @@
 	    }
 	    if (Math.random()*4800 < 4) {
 	      this.burst();
+	    }
+	    if (this.start % this.rate === -0) {
+	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
 	    }
 	  },
 	  burst: function () {
@@ -268,7 +271,7 @@
 	            this.destroy();
 	          }
 	          if (attacker.rate >= 88) {
-	            attacker.rate -= 3;
+	            attacker.rate -= 7;
 	          }
 	        }
 	        if (rocket.type === "magnet") {
@@ -963,7 +966,9 @@
 	        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
 	        ghosts.forEach( function (ghost) {
 	          if (ghost) {
-	            ghost.destroy();
+	            if (ghost.idx%2) {
+	              ghost.destroy();
+	            }
 	          }
 	        });
 	      }
@@ -997,7 +1002,7 @@
 	    if (sun.y > 600) { a.globalAlpha = 1-(sun.y-600)/300; }
 	    if (sun.y < 400 && sun.y > 200) { a.globalAlpha = (sun.y-200)/200; }
 	
-	    if (Math.random()*10+14<(24-shield.health)) {
+	    if (Math.random()*4+20<(24-shield.health)) {
 	      a.globalAlpha = 0;
 	    }
 	
@@ -1111,7 +1116,9 @@
 	        a.fillStyle = "#0000ff";
 	        a.beginPath();
 	        a.arc(ghost.x, ghost.y, 12, 0, 2*Math.PI, false);
+	        a.globalAlpha = 0.4;
 	        a.fill();
+	        a.globalAlpha = 1;
 	      }
 	    });
 	  };
@@ -1430,11 +1437,6 @@
 	        if (dice < 8) {
 	          missiles.push(new Missile(lunamod.x, lunamod.y, 0, 6, missiles.length));
 	          lunamod.ammo -= 1;
-	          ghosts.forEach(function (ghost) {
-	            if (ghost && Math.random() < 0.2) {
-	              ghost.destroy();
-	            }
-	          });
 	        }
 	      }
 	      //RUN AWAY WHEN OUT OF AMMO
