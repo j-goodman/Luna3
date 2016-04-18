@@ -1,20 +1,24 @@
 var keyEvents = function (document, player) {
   document.onkeydown = function (e) {
     switch(e.keyCode) {
-    case 37: //right
-      if (player.mobile) {player.xspeed = -3;}
-        else {player.spin = -4;}
-      break;
-    case 39: //left
+    case 68: // d
+    case 39: //right
       if (player.mobile) {player.xspeed = 3;}
         else {player.spin = 4;}
       break;
+    case 65: // a
+    case 37: //left
+      if (player.mobile) {player.xspeed = -3;}
+        else {player.spin = -4;}
+      break;
+    case 87: // w
     case 38: //up
       player.mobile = true;
       if (player.health > 0) {
         player.y = 482;
       }
       break;
+    case 83: // s
     case 40: //down
       player.xspeed = 0;
       player.mobile = false;
@@ -32,12 +36,14 @@ var keyEvents = function (document, player) {
 
   document.onkeyup = function (e) {
     switch(e.keyCode) {
-    case 37: //right
-      if (player.xspeed < 0) { player.xspeed = 0; }
+    case 68: // d
+    case 39: //right
+      if (player.xspeed > 0) { player.xspeed = 0; }
       if (!player.mobile) {player.spin = 0;}
       break;
-    case 39: //left
-      if (player.xspeed > 0) { player.xspeed = 0; }
+    case 65: // a
+    case 37: //left
+      if (player.xspeed < 0) { player.xspeed = 0; }
       if (!player.mobile) {player.spin = 0;}
       break;
     case 32: //space

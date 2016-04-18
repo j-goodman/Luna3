@@ -51,6 +51,8 @@
 	DEGREES = (Math.PI / 180);
 	RADIANS = (180 / Math.PI);
 	
+	//REQUIRE GAME OBJECTS
+	//Each object is a singleton
 	var shield = __webpack_require__(1);
 	var attacker = __webpack_require__(2);
 	var player = __webpack_require__(7);
@@ -59,11 +61,13 @@
 	var starfield = __webpack_require__(16);
 	var carrier = __webpack_require__(17);
 	
+	//REQUIRE GAME CONSTRUCTORS
+	//Each class corresponds to an array
 	var Rocket = __webpack_require__(8);
-	var Magnet = __webpack_require__(10);
-	var Clusterbomb = __webpack_require__(11);
-	var Revolver = __webpack_require__(13);
-	var Laser = __webpack_require__(12);
+	  var Magnet = __webpack_require__(10);
+	  var Clusterbomb = __webpack_require__(11);
+	  var Revolver = __webpack_require__(13);
+	  var Laser = __webpack_require__(12);
 	
 	var Explosion = __webpack_require__(6);
 	var Powerup = __webpack_require__(18);
@@ -73,64 +77,67 @@
 	
 	var Lunamod = __webpack_require__(19);
 	
+	//REQUIRE OBJECT ARRAYS
+	//Constructed objects are pushed into Object Arrays to be moved and drawn
 	var objectArrays = __webpack_require__(3);
 	
 	var keyEvents = __webpack_require__(20);
 	keyEvents(document, player);
 	
-	var drawer = __webpack_require__(21);
-	drawer(canvas, a);
+	var Drawer = __webpack_require__(21);
+	Drawer(canvas, a);
 	
-	var mover = __webpack_require__(23);
-	mover(canvas, a);
+	var Mover = __webpack_require__(23);
+	Mover(canvas, a);
 	
-	objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
-	objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-	objectArrays.lunamods.push(new Lunamod(20000, 80, objectArrays.lunamods.length));
-	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
-	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
-	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
-	objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
+	window.setupGame = function () {
+	  objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
+	  objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
+	  objectArrays.lunamods.push(new Lunamod(20000, 80, objectArrays.lunamods.length));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
+	};
 	
+	a.drawObjects = function () {
+	    a.drawSky();
+	    a.drawCity();
+	    a.drawRockets();
+	    a.drawExplosions();
+	    a.drawMissiles();
+	    a.drawCarrier();
+	    a.drawLunamods();
+	    a.drawPowerups();
+	    a.drawMoon();
+	    a.drawHealthBar();
+	    a.drawPlayer();
+	  };
+	
+	  a.moveObjects = function () {
+	    a.moveRockets();
+	    a.moveMissiles();
+	    a.moveGhosts();
+	    a.moveCarrier();
+	    a.moveLunamods();
+	    a.movePowerups();
+	    a.movePlayer();
+	  };
+	
+	  setupGame();
 	  setInterval(function() {
 	
 	    a.clearRect(0, 0, canvas.width, canvas.height);
 	    a.fillStyle = "black";
 	    a.fillRect(0, 0, canvas.width, canvas.height);
 	
-	    a.drawSky();
-	
-	    a.drawCity();
-	
 	    if (attacker.start > 0) { a.drawStartScreen() ;}
-	
-	    a.moveRockets();
-	    a.drawRockets();
-	    a.drawExplosions();
-	
-	    a.drawMissiles();
-	    a.moveMissiles();
+	    
+	    a.moveObjects();
+	    a.drawObjects();
 	
 	    attacker.deployGhost();
-	    a.moveGhosts();
 	
-	    a.drawCarrier();
-	    a.moveCarrier();
-	
-	    a.drawLunamods();
-	    a.moveLunamods();
-	
-	    a.moveCarrier();
-	
-	    a.drawPowerups();
-	    a.movePowerups();
-	
-	    a.movePlayer();
-	    a.drawPlayer();
-	
-	    a.drawMoon();
-	
-	    a.drawHealthBar();
 	
 	  }, 30);
 	};
@@ -669,7 +676,7 @@
 	      if (rocket) {
 	        if ((rocket.x > this.x-36 && rocket.x < this.x+36) &&
 	        (rocket.y > this.y-36 && rocket.y < this.y+36)) {
-	          player.score += 101;
+	          player.score += 100;
 	          rocket.destroy();
 	          this.destroy();
 	        }
@@ -816,20 +823,24 @@
 	var keyEvents = function (document, player) {
 	  document.onkeydown = function (e) {
 	    switch(e.keyCode) {
-	    case 37: //right
-	      if (player.mobile) {player.xspeed = -3;}
-	        else {player.spin = -4;}
-	      break;
-	    case 39: //left
+	    case 68: // d
+	    case 39: //right
 	      if (player.mobile) {player.xspeed = 3;}
 	        else {player.spin = 4;}
 	      break;
+	    case 65: // a
+	    case 37: //left
+	      if (player.mobile) {player.xspeed = -3;}
+	        else {player.spin = -4;}
+	      break;
+	    case 87: // w
 	    case 38: //up
 	      player.mobile = true;
 	      if (player.health > 0) {
 	        player.y = 482;
 	      }
 	      break;
+	    case 83: // s
 	    case 40: //down
 	      player.xspeed = 0;
 	      player.mobile = false;
@@ -847,12 +858,14 @@
 	
 	  document.onkeyup = function (e) {
 	    switch(e.keyCode) {
-	    case 37: //right
-	      if (player.xspeed < 0) { player.xspeed = 0; }
+	    case 68: // d
+	    case 39: //right
+	      if (player.xspeed > 0) { player.xspeed = 0; }
 	      if (!player.mobile) {player.spin = 0;}
 	      break;
-	    case 39: //left
-	      if (player.xspeed > 0) { player.xspeed = 0; }
+	    case 65: // a
+	    case 37: //left
+	      if (player.xspeed < 0) { player.xspeed = 0; }
 	      if (!player.mobile) {player.spin = 0;}
 	      break;
 	    case 32: //space

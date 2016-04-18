@@ -18,7 +18,7 @@ var carrier = {
       if (rocket) {
         if ((rocket.x > this.x-36 && rocket.x < this.x+36) &&
         (rocket.y > this.y-36 && rocket.y < this.y+36)) {
-          player.score += 101;
+          player.score += 100;
           rocket.destroy();
           this.destroy();
         }
