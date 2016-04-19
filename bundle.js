@@ -82,7 +82,7 @@
 	var objectArrays = __webpack_require__(3);
 	
 	var keyEvents = __webpack_require__(20);
-	keyEvents(document, player);
+	keyEvents(document, player, shield);
 	
 	var Drawer = __webpack_require__(21);
 	Drawer(canvas, a);
@@ -93,7 +93,7 @@
 	window.setupGame = function () {
 	  objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 	  objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-	  objectArrays.lunamods.push(new Lunamod(20000, 80, objectArrays.lunamods.length));
+	  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
@@ -132,12 +132,15 @@
 	    a.fillRect(0, 0, canvas.width, canvas.height);
 	
 	    if (attacker.start > 0) { a.drawStartScreen() ;}
-	    
+	
 	    a.moveObjects();
 	    a.drawObjects();
 	
 	    attacker.deployGhost();
 	
+	    if (shield.health < 0 || player.health <= 0) {
+	      a.drawReload();
+	    }
 	
 	  }, 30);
 	};
@@ -171,7 +174,7 @@
 	  deployGhost: function () {
 	    this.start -= 1;
 	    var dice = Math.round(Math.random()*attacker.rate);
-	    if (dice < 2 && shield.health > -6 && this.start < 30) {
+	    if (dice < 2 && shield.health > -1 && this.start < 30) {
 	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
 	    }
 	    if (Math.random()*4800 < 4) {
@@ -820,7 +823,7 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	var keyEvents = function (document, player) {
+	var keyEvents = function (document, player, shield) {
 	  document.onkeydown = function (e) {
 	    switch(e.keyCode) {
 	    case 68: // d
@@ -880,6 +883,11 @@
 	        }
 	      }
 	      break;
+	    case 13: //ENTER
+	      if (shield.health < 0 || player.health <= 0) {
+	        location.reload();
+	      }
+	      break;
 	    }
 	  };
 	};
@@ -918,6 +926,15 @@
 	      a.drawInstructions();
 	    }
 	    a.drawCity();
+	  };
+	
+	  a.drawReload = function () {
+	    a.globalAlpha = 0.15;
+	    a.fillStyle = "black";
+	    a.font = "12px Courier";
+	    a.lineWidth = 1;
+	    a.fillText("press ENTER to try again", 364, 515);
+	    a.globalAlpha = 1;
 	  };
 	
 	  a.drawInstructions = function () {
@@ -1001,7 +1018,7 @@
 	  };
 	
 	  a.drawCity = function () {
-	    if (Math.random()*10+14<(24-shield.health)) {
+	    if (Math.random()*4+20<(24-shield.health)) {
 	      a.globalAlpha = 0;
 	    }
 	
@@ -1328,25 +1345,27 @@
 	            player.health -= 2;
 	          }
 	        }
-	        if (rocket.type === "laser") {
-	          rocket.checkLaser();
-	          if (rocket.firingLaser) {rocket.firingLaser++;}
-	          if (rocket.firingLaser && rocket.firingLaser>8) {
-	            rocket.stopLaser();
+	        switch(rocket.type) {
+	          case "laser":
+	            rocket.checkLaser();
+	            if (rocket.firingLaser) {rocket.firingLaser++;}
+	            if (rocket.firingLaser && rocket.firingLaser>8) {
+	              rocket.stopLaser();
+	            }
+	            break;
+	          case "revolver":
+	            rocket.timer -= 5;
+	            if (rocket.timer < 0 ) {
+	              rocket.deployKoopashells();
+	            }
+	            break;
+	          case "koopashell":
+	            rocket.timer -= 1;
+	            if (rocket.timer < 0) {
+	              rocket.destroy();
+	            }
+	            break;
 	          }
-	        }
-	        if (rocket.type === "revolver") {
-	          rocket.timer -= 5;
-	          if (rocket.timer < 0 ) {
-	            rocket.deployKoopashells();
-	          }
-	        }
-	        if (rocket.type === "koopashell") {
-	          rocket.timer -= 1;
-	          if (rocket.timer < 0) {
-	            rocket.destroy();
-	          }
-	        }
 	      }
 	    });
 	  };

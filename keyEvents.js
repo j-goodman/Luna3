@@ -1,4 +1,4 @@
-var keyEvents = function (document, player) {
+var keyEvents = function (document, player, shield) {
   document.onkeydown = function (e) {
     switch(e.keyCode) {
     case 68: // d
@@ -56,6 +56,11 @@ var keyEvents = function (document, player) {
         while (player.ammoStore[player.ammoType] <= 0) {
           player.toggleRocket();
         }
+      }
+      break;
+    case 13: //ENTER
+      if (shield.health < 0 || player.health <= 0) {
+        location.reload();
       }
       break;
     }

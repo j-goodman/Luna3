@@ -36,7 +36,7 @@ var Lunamod = require('./constructors/lunamod.js');
 var objectArrays = require('./objectArrays.js');
 
 var keyEvents = require('./keyEvents');
-keyEvents(document, player);
+keyEvents(document, player, shield);
 
 var Drawer = require('./drawer.js');
 Drawer(canvas, a);
@@ -47,7 +47,7 @@ Mover(canvas, a);
 window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-  objectArrays.lunamods.push(new Lunamod(20000, 80, objectArrays.lunamods.length));
+  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
@@ -86,12 +86,15 @@ a.drawObjects = function () {
     a.fillRect(0, 0, canvas.width, canvas.height);
 
     if (attacker.start > 0) { a.drawStartScreen() ;}
-    
+
     a.moveObjects();
     a.drawObjects();
 
     attacker.deployGhost();
 
+    if (shield.health < 0 || player.health <= 0) {
+      a.drawReload();
+    }
 
   }, 30);
 };

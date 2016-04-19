@@ -8,7 +8,7 @@ var attacker = {
   deployGhost: function () {
     this.start -= 1;
     var dice = Math.round(Math.random()*attacker.rate);
-    if (dice < 2 && shield.health > -6 && this.start < 30) {
+    if (dice < 2 && shield.health > -1 && this.start < 30) {
       ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
     }
     if (Math.random()*4800 < 4) {

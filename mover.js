@@ -62,25 +62,27 @@ var mover = function (canvas, a) {
             player.health -= 2;
           }
         }
-        if (rocket.type === "laser") {
-          rocket.checkLaser();
-          if (rocket.firingLaser) {rocket.firingLaser++;}
-          if (rocket.firingLaser && rocket.firingLaser>8) {
-            rocket.stopLaser();
+        switch(rocket.type) {
+          case "laser":
+            rocket.checkLaser();
+            if (rocket.firingLaser) {rocket.firingLaser++;}
+            if (rocket.firingLaser && rocket.firingLaser>8) {
+              rocket.stopLaser();
+            }
+            break;
+          case "revolver":
+            rocket.timer -= 5;
+            if (rocket.timer < 0 ) {
+              rocket.deployKoopashells();
+            }
+            break;
+          case "koopashell":
+            rocket.timer -= 1;
+            if (rocket.timer < 0) {
+              rocket.destroy();
+            }
+            break;
           }
-        }
-        if (rocket.type === "revolver") {
-          rocket.timer -= 5;
-          if (rocket.timer < 0 ) {
-            rocket.deployKoopashells();
-          }
-        }
-        if (rocket.type === "koopashell") {
-          rocket.timer -= 1;
-          if (rocket.timer < 0) {
-            rocket.destroy();
-          }
-        }
       }
     });
   };

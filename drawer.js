@@ -27,6 +27,15 @@ var Explosion = require('./constructors/Explosion');
     a.drawCity();
   };
 
+  a.drawReload = function () {
+    a.globalAlpha = 0.15;
+    a.fillStyle = "black";
+    a.font = "12px Courier";
+    a.lineWidth = 1;
+    a.fillText("press ENTER to try again", 364, 525);
+    a.globalAlpha = 1;
+  };
+
   a.drawInstructions = function () {
     a.strokeStyle = "white";
     a.strokeRect(235, 140, 50, 50);
@@ -108,7 +117,7 @@ var Explosion = require('./constructors/Explosion');
   };
 
   a.drawCity = function () {
-    if (Math.random()*10+14<(24-shield.health)) {
+    if (Math.random()*4+20<(24-shield.health)) {
       a.globalAlpha = 0;
     }
 
