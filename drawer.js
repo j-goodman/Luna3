@@ -28,7 +28,7 @@ var Explosion = require('./constructors/Explosion');
   };
 
   a.drawReload = function () {
-    a.globalAlpha = 0.15;
+    a.globalAlpha = 0.3;
     a.fillStyle = "black";
     a.font = "12px Courier";
     a.lineWidth = 1;
