@@ -929,11 +929,11 @@
 	  };
 	
 	  a.drawReload = function () {
-	    a.globalAlpha = 0.15;
+	    a.globalAlpha = 0.3;
 	    a.fillStyle = "black";
 	    a.font = "12px Courier";
 	    a.lineWidth = 1;
-	    a.fillText("press ENTER to try again", 364, 515);
+	    a.fillText("press ENTER to try again", 364, 525);
 	    a.globalAlpha = 1;
 	  };
 	
