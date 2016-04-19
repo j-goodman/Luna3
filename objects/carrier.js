@@ -10,7 +10,7 @@ var Explosion = require('../constructors/explosion.js');
 var carrier = {
   x: -32000,
   y: 100,
-  xspeed: 3,
+  xspeed: 6,
   destroyed: false,
   sprite: "carrier_3",
   rocketCollide: function () {
@@ -47,6 +47,21 @@ var carrier = {
 
       this.x = 30000;
 
+    },
+    move: function (canvas) {
+      carrier.x += carrier.xspeed;
+      if (carrier.x > 30000) {
+        carrier.xspeed = -6;
+        carrier.sprite = "carrier_9";
+        carrier.destroyed = false;
+        carrier.y = Math.random()*canvas.height/2+12;
+      } else if (carrier.x < -20000) {
+        carrier.xspeed = 6;
+        carrier.sprite = "carrier_3";
+        carrier.destroyed = false;
+        carrier.y = Math.random()*canvas.height/2+12;
+      }
+      carrier.rocketCollide();
     }
 };
 

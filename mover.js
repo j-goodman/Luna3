@@ -33,6 +33,7 @@ var mover = function (canvas, a) {
       if (player.ammoStore["rocket"] !== 2) {
         player.ammoStore["rocket"] = 2;
       }
+
     } else {
       carrier.destroyed = true;
       lunamods.forEach( function (lunamod) {
@@ -142,19 +143,9 @@ var mover = function (canvas, a) {
   };
 
   a.moveCarrier = function () {
-    carrier.x += carrier.xspeed;
-    if (carrier.x > 30000) {
-      carrier.xspeed = -3;
-      carrier.sprite = "carrier_9";
-      carrier.destroyed = false;
-      carrier.y = Math.random()*canvas.height/2+12;
-    } else if (carrier.x < -20000) {
-      carrier.xspeed = 3;
-      carrier.sprite = "carrier_3";
-      carrier.destroyed = false;
-      carrier.y = Math.random()*canvas.height/2+12;
+    if (carrier) {
+      carrier.move(canvas);
     }
-    carrier.rocketCollide();
   };
 
   a.moveLunamods = function () {

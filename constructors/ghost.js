@@ -1,6 +1,7 @@
 var Missile = require('./missile.js');
-var missiles = require('../objectArrays').missiles;
-var ghosts = require('../objectArrays').ghosts;
+var missiles = require('../objectArrays.js').missiles;
+var ghosts = require('../objectArrays.js').ghosts;
+var shield = require('../objects/shield.js');
 
 var Ghost = function (x, y, degrees, idx) {
   this.x = x;
@@ -13,7 +14,9 @@ var Ghost = function (x, y, degrees, idx) {
   this.yaccel = 0;
   this.deploy = function () {
     this.x += (Math.random()*120)-60;
-    missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
+    if (shield.health > -2) {
+      missiles.push(new Missile(this.x, this.y, this.xspeed*(-1), this.yspeed*(-1), missiles.length));
+    }
     this.destroy();
   };
   this.destroy = function () {

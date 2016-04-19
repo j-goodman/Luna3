@@ -1,5 +1,5 @@
-var player = require('../objects/player');
-var powerups = require('../objectArrays').powerups;
+var player = require('../objects/player.js');
+var powerups = require('../objectArrays.js').powerups;
 
 var Powerup = function (x, y, type, sprite, idx) {
   this.x = x;
@@ -17,13 +17,15 @@ var Powerup = function (x, y, type, sprite, idx) {
     }
   };
   this.destroy = function () {
-    if (player.ammoStore[this.type]) {
-      player.ammoStore[this.type] += 1;
-    } else {
-      player.showShift = 3;
-      player.ammoStore[this.type] = 1;
+    if (player.ammoStore) {
+      if (player.ammoStore[this.type]) {
+        player.ammoStore[this.type] += 1;
+      } else {
+        player.showShift = 3;
+        player.ammoStore[this.type] = 1;
+      }
+      powerups[this.idx] = undefined;
     }
-    powerups[this.idx] = undefined;
   };
 };
 
