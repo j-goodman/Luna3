@@ -53,6 +53,9 @@ var Explosion = require('./constructors/Explosion');
     a.strokeRect(315, 220, 140, 44);
     a.fillText("S P A C E", 330, 248);
     a.fillText("FIRE rocket", 475, 248);
+    a.strokeRect(265, 300, 140, 44);
+    a.fillText("S H I F T", 280, 328);
+    a.fillText("CHANGE rocket type", 435, 330);
   };
 
   a.drawSky = function () {

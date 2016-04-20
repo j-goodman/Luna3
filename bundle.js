@@ -56,10 +56,10 @@
 	var shield = __webpack_require__(1);
 	var attacker = __webpack_require__(2);
 	var player = __webpack_require__(7);
-	var earth = __webpack_require__(16);
-	var sun = __webpack_require__(17);
-	var starfield = __webpack_require__(18);
-	var carrier = __webpack_require__(14);
+	var earth = __webpack_require__(14);
+	var sun = __webpack_require__(15);
+	var starfield = __webpack_require__(16);
+	var carrier = __webpack_require__(17);
 	
 	//REQUIRE GAME CONSTRUCTORS
 	//Each class corresponds to an array
@@ -70,7 +70,7 @@
 	  var Laser = __webpack_require__(12);
 	
 	var Explosion = __webpack_require__(6);
-	var Powerup = __webpack_require__(15);
+	var Powerup = __webpack_require__(18);
 	
 	var Missile = __webpack_require__(5);
 	var Ghost = __webpack_require__(4);
@@ -589,6 +589,74 @@
 
 /***/ },
 /* 14 */
+/***/ function(module, exports) {
+
+	var earth = {
+	  y: 600,
+	  timer: 0,
+	  sprite: document.getElementById("earth"),
+	  cloudsprite: document.getElementById("cloudcover"),
+	  explosions: [{time: 3000, x: 60, y: 200},
+	               {time: 3060, x: 80, y: 60},
+	               {time: 3070, x: 160, y: 10},
+	               {time: 3090, x: 50, y: 180},
+	               {time: 3150, x: 200, y: 80},
+	               {time: 3160, x: 90, y: 120},
+	               {time: 3190, x: 200, y: 200},
+	               {time: 3195, x: 200, y: 250},
+	               {time: 3200, x: 90, y: 90},
+	               {time: 3220, x: 60, y: 100},
+	               {time: 3260, x: 80, y: 30},
+	               {time: 3270, x: 180, y: 130},
+	               {time: 3290, x: 220, y: 30},
+	               {time: 3320, x: 180, y: 270},
+	               {time: 3360, x: 160, y: 10},
+	               {time: 3380, x: 50, y: 180},
+	               {time: 3390, x: 150, y: 100},
+	               {time: 3400, x: 220, y: 240},
+	               {time: 3420, x: 200, y: 80},
+	               {time: 3425, x: 210, y: 85},
+	               {time: 3430, x: 90, y: 120},
+	               {time: 3440, x: 280, y: 200},
+	               {time: 3440, x: 220, y: 260},
+	               {time: 3460, x: 110, y: 140},
+	               {time: 3470, x: 200, y: 200},
+	               {time: 3480, x: 100, y: 130},
+	               {time: 3490, x: 100, y: 140}, ]
+	};
+	
+	module.exports = earth;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	var sun = {
+	  y: -400
+	};
+	
+	module.exports = sun;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	starfield = [];
+	
+	for (var i = 0; i < 100; i++) {
+	  var randX = Math.round(Math.random()*900);
+	  var randY = Math.round(Math.random()*900);
+	  var rad = Math.round(Math.random()*0.6+1);
+	  starfield.push([randX, randY, rad]);
+	}
+	
+	module.exports = starfield;
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var rockets = __webpack_require__(3).rockets;
@@ -596,7 +664,7 @@
 	var missiles = __webpack_require__(3).missiles;
 	var explosions = __webpack_require__(3).explosions;
 	var player = __webpack_require__(7);
-	var Powerup = __webpack_require__(15);
+	var Powerup = __webpack_require__(18);
 	var Missile = __webpack_require__(5);
 	var Explosion = __webpack_require__(6);
 	
@@ -662,7 +730,7 @@
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var player = __webpack_require__(7);
@@ -700,74 +768,6 @@
 
 
 /***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	var earth = {
-	  y: 600,
-	  timer: 0,
-	  sprite: document.getElementById("earth"),
-	  cloudsprite: document.getElementById("cloudcover"),
-	  explosions: [{time: 3000, x: 60, y: 200},
-	               {time: 3060, x: 80, y: 60},
-	               {time: 3070, x: 160, y: 10},
-	               {time: 3090, x: 50, y: 180},
-	               {time: 3150, x: 200, y: 80},
-	               {time: 3160, x: 90, y: 120},
-	               {time: 3190, x: 200, y: 200},
-	               {time: 3195, x: 200, y: 250},
-	               {time: 3200, x: 90, y: 90},
-	               {time: 3220, x: 60, y: 100},
-	               {time: 3260, x: 80, y: 30},
-	               {time: 3270, x: 180, y: 130},
-	               {time: 3290, x: 220, y: 30},
-	               {time: 3320, x: 180, y: 270},
-	               {time: 3360, x: 160, y: 10},
-	               {time: 3380, x: 50, y: 180},
-	               {time: 3390, x: 150, y: 100},
-	               {time: 3400, x: 220, y: 240},
-	               {time: 3420, x: 200, y: 80},
-	               {time: 3425, x: 210, y: 85},
-	               {time: 3430, x: 90, y: 120},
-	               {time: 3440, x: 280, y: 200},
-	               {time: 3440, x: 220, y: 260},
-	               {time: 3460, x: 110, y: 140},
-	               {time: 3470, x: 200, y: 200},
-	               {time: 3480, x: 100, y: 130},
-	               {time: 3490, x: 100, y: 140}, ]
-	};
-	
-	module.exports = earth;
-
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	var sun = {
-	  y: -400
-	};
-	
-	module.exports = sun;
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	starfield = [];
-	
-	for (var i = 0; i < 100; i++) {
-	  var randX = Math.round(Math.random()*900);
-	  var randY = Math.round(Math.random()*900);
-	  var rad = Math.round(Math.random()*0.6+1);
-	  starfield.push([randX, randY, rad]);
-	}
-	
-	module.exports = starfield;
-
-
-/***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -775,7 +775,7 @@
 	var explosions = __webpack_require__(3).explosions;
 	var powerups = __webpack_require__(3).powerups;
 	var Explosion = __webpack_require__(6);
-	var Powerup = __webpack_require__(15);
+	var Powerup = __webpack_require__(18);
 	var player = __webpack_require__(7);
 	var lunamods = __webpack_require__(3).lunamods;
 	
@@ -919,10 +919,10 @@
 	drawer = function (canvas, a) {
 	var shield = __webpack_require__(1);
 	var player = __webpack_require__(7);
-	var earth = __webpack_require__(16);
-	var sun = __webpack_require__(17);
-	var starfield = __webpack_require__(18);
-	var carrier = __webpack_require__(14);
+	var earth = __webpack_require__(14);
+	var sun = __webpack_require__(15);
+	var starfield = __webpack_require__(16);
+	var carrier = __webpack_require__(17);
 	var rockets = __webpack_require__(3).rockets;
 	var explosions = __webpack_require__(3).explosions;
 	var missiles = __webpack_require__(3).missiles;
@@ -971,6 +971,9 @@
 	    a.strokeRect(315, 220, 140, 44);
 	    a.fillText("S P A C E", 330, 248);
 	    a.fillText("FIRE rocket", 475, 248);
+	    a.strokeRect(265, 300, 140, 44);
+	    a.fillText("S H I F T", 280, 328);
+	    a.fillText("CHANGE rocket type", 435, 330);
 	  };
 	
 	  a.drawSky = function () {
@@ -1302,7 +1305,7 @@
 	
 	  var shield = __webpack_require__(1);
 	  var player = __webpack_require__(7);
-	  var carrier = __webpack_require__(14);
+	  var carrier = __webpack_require__(17);
 	
 	  var Missile = __webpack_require__(5);
 	
