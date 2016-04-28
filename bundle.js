@@ -102,6 +102,7 @@
 	  player.mobile = false;
 	  player.y = 488;
 	  player.score = 0;
+	  player.xspeed = 0;
 	  player.ammoStore = {"rocket": 2};
 	  player.ammoType = "rocket";
 	  player.ammoIndex = 0;
@@ -381,7 +382,7 @@
 	  ammoType: "rocket",
 	  showShift: 0,
 	  showCount: 0,
-	  ammoStore: {"rocket": 2},
+	  ammoStore: {"rocket": 2, "revolver": 1, "clusterbomb": 1, "laser": 1, "magnet": 1},
 	  launcherSprite: document.getElementById("launcher"),
 	  blastedSprite: document.getElementById("blastedHeap"),
 	  chassisSprite: document.getElementById("chassis"),
@@ -403,7 +404,8 @@
 	
 	    player.ammoStore[player.ammoType] -= 1;
 	    if (player.ammoStore[player.ammoType] <= 0) {
-	      player.toggleRocket();
+	      player.ammoType = "rocket";
+	      player.ammoIndex = 0;
 	    }
 	  },
 	  toggleRocket: function () {
