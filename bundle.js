@@ -106,8 +106,9 @@
 	  player.ammoStore = {"rocket": 2};
 	  player.ammoType = "rocket";
 	  player.ammoIndex = 0;
-	  shield.health = 24;
 	  attacker.rate = 300;
+	  attacker.start = 300;
+	  shield.health = 24;
 	};
 	
 	window.setupGame = function () {

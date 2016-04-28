@@ -57,12 +57,12 @@ window.resetGame = function () {
   player.y = 488;
   player.score = 0;
   player.xspeed = 0;
-  player.ammoStore = {"rocket": 2};
+  player.ammoStore = {"rocket": 2, "revolver": 1, "clusterbomb": 1, "laser": 1, "magnet": 1};
   player.ammoType = "rocket";
   player.ammoIndex = 0;
-  shield.health = 24;
   attacker.rate = 300;
   attacker.start = 300;
+  shield.health = 24;
 };
 
 window.setupGame = function () {
