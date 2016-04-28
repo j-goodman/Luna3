@@ -56,6 +56,7 @@ window.resetGame = function () {
   player.mobile = false;
   player.y = 488;
   player.score = 0;
+  player.xspeed = 0;
   player.ammoStore = {"rocket": 2};
   player.ammoType = "rocket";
   player.ammoIndex = 0;
