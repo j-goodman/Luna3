@@ -62,6 +62,7 @@ window.resetGame = function () {
   player.ammoIndex = 0;
   shield.health = 24;
   attacker.rate = 300;
+  attacker.start = 300;
 };
 
 window.setupGame = function () {
