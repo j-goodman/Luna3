@@ -44,6 +44,25 @@ Drawer(canvas, a);
 var Mover = require('./mover.js');
 Mover(canvas, a);
 
+window.resetGame = function () {
+  objectArrays.missiles.splice(0,objectArrays.missiles.length);
+  objectArrays.rockets.splice(0,objectArrays.rockets.length);
+  objectArrays.explosions.splice(0,objectArrays.explosions.length);
+  objectArrays.ghosts.splice(0,objectArrays.ghosts.length);
+  objectArrays.lunamods.splice(0,objectArrays.lunamods.length);
+  objectArrays.powerups.splice(0,objectArrays.powerups.length);
+  window.setupGame();
+  player.health = 12;
+  player.mobile = false;
+  player.y = 488;
+  player.score = 0;
+  player.ammoStore = {"rocket": 2};
+  player.ammoType = "rocket";
+  player.ammoIndex = 0;
+  shield.health = 24;
+  attacker.rate = 300;
+};
+
 window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
@@ -96,5 +115,5 @@ a.drawObjects = function () {
       a.drawReload();
     }
 
-  }, 30);
+  }, 32);
 };

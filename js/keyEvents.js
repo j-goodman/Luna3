@@ -60,7 +60,7 @@ var keyEvents = function (document, player, shield) {
       break;
     case 13: //ENTER
       if (shield.health < 0 || player.health <= 0) {
-        location.reload();
+        window.resetGame();
       }
       break;
     }
