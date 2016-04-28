@@ -106,8 +106,6 @@ a.drawObjects = function () {
     a.fillStyle = "black";
     a.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (attacker.start > 0) { a.drawStartScreen() ;}
-
     a.moveObjects();
     a.drawObjects();
 
@@ -117,5 +115,6 @@ a.drawObjects = function () {
       a.drawReload();
     }
 
+    if (attacker.start > 0) { a.drawStartScreen() ;}
   }, 32);
 };
