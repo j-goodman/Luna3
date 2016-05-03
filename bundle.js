@@ -159,10 +159,11 @@
 	    if (shield.health < 0 || player.health <= 0) {
 	      a.drawReload();
 	    }
-	    
+	
 	    a.drawObjects();
 	
 	    if (attacker.start > 0) { a.drawStartScreen() ;}
+	    if (shield.health <= 0 || player.health <= 0) { a.drawReload() ;}
 	  }, 32);
 	};
 
