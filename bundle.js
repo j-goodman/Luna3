@@ -370,7 +370,7 @@
 	var Revolver = __webpack_require__(13);
 	
 	var player = {
-	  x: (Math.random()*600)+150,
+	  x: 600,
 	  y: 488,
 	  mobile: false,
 	  health: 12,

@@ -6,7 +6,7 @@ var Laser = require('../constructors/laser.js');
 var Revolver = require('../constructors/revolver.js');
 
 var player = {
-  x: (Math.random()*600)+150,
+  x: 600,
   y: 488,
   mobile: false,
   health: 12,
