@@ -258,7 +258,13 @@ var Explosion = require('./constructors/Explosion');
   a.drawLunamods = function () {
     lunamods.forEach(function (lunamod) {
       if (lunamod) {
-        a.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
+        if (lunamod.hoverHeight < 120) {
+          a.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
+        } else if (lunamod.hoverHeight < 340) {
+          a.drawImage(document.getElementById("lunamod_1"), lunamod.x-24, lunamod.y-24, 48, 48);
+        } else {
+          a.drawImage(document.getElementById("lunamod_2"), lunamod.x-24, lunamod.y-24, 48, 48);
+        }
       }
     });
   };

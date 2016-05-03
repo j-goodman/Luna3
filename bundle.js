@@ -103,9 +103,9 @@
 	  player.y = 488;
 	  player.score = 0;
 	  player.xspeed = 0;
-	  player.ammoStore = {"rocket": 2};
-	  player.ammoType = "rocket";
 	  player.ammoIndex = 0;
+	  player.ammoType = "rocket";
+	  player.ammoStore = {"rocket": 2, "revolver": 1, "clusterbomb": 1, "laser": 1, "magnet": 1};
 	  attacker.rate = 300;
 	  attacker.start = 300;
 	  shield.health = 24;
@@ -152,17 +152,17 @@
 	    a.fillStyle = "black";
 	    a.fillRect(0, 0, canvas.width, canvas.height);
 	
-	    if (attacker.start > 0) { a.drawStartScreen() ;}
-	
 	    a.moveObjects();
-	    a.drawObjects();
 	
 	    attacker.deployGhost();
 	
 	    if (shield.health < 0 || player.health <= 0) {
 	      a.drawReload();
 	    }
+	    
+	    a.drawObjects();
 	
+	    if (attacker.start > 0) { a.drawStartScreen() ;}
 	  }, 32);
 	};
 
@@ -667,7 +667,7 @@
 
 	starfield = [];
 	
-	for (var i = 0; i < 100; i++) {
+	for (var i = 0; i < 75; i++) {
 	  var randX = Math.round(Math.random()*900);
 	  var randY = Math.round(Math.random()*900);
 	  var rad = Math.round(Math.random()*0.6+1);
@@ -1198,7 +1198,13 @@
 	  a.drawLunamods = function () {
 	    lunamods.forEach(function (lunamod) {
 	      if (lunamod) {
-	        a.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
+	        if (lunamod.hoverHeight < 120) {
+	          a.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
+	        } else if (lunamod.hoverHeight < 340) {
+	          a.drawImage(document.getElementById("lunamod_1"), lunamod.x-24, lunamod.y-24, 48, 48);
+	        } else {
+	          a.drawImage(document.getElementById("lunamod_2"), lunamod.x-24, lunamod.y-24, 48, 48);
+	        }
 	      }
 	    });
 	  };

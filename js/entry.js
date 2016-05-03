@@ -57,9 +57,9 @@ window.resetGame = function () {
   player.y = 488;
   player.score = 0;
   player.xspeed = 0;
-  player.ammoStore = {"rocket": 2, "revolver": 1, "clusterbomb": 1, "laser": 1, "magnet": 1};
-  player.ammoType = "rocket";
   player.ammoIndex = 0;
+  player.ammoType = "rocket";
+  player.ammoStore = {"rocket": 2, "revolver": 1, "clusterbomb": 1, "laser": 1, "magnet": 1};
   attacker.rate = 300;
   attacker.start = 300;
   shield.health = 24;
@@ -107,13 +107,14 @@ a.drawObjects = function () {
     a.fillRect(0, 0, canvas.width, canvas.height);
 
     a.moveObjects();
-    a.drawObjects();
 
     attacker.deployGhost();
 
     if (shield.health < 0 || player.health <= 0) {
       a.drawReload();
     }
+    
+    a.drawObjects();
 
     if (attacker.start > 0) { a.drawStartScreen() ;}
   }, 32);
