@@ -1,6 +1,6 @@
 window.onload = function () {
   var canvas = document.getElementById("screen"),
-    a = canvas.getContext("2d");
+    ctx = canvas.getContext("2d");
 
 DEGREES = (Math.PI / 180);
 RADIANS = (180 / Math.PI);
@@ -39,10 +39,10 @@ var keyEvents = require('./keyEvents');
 keyEvents(document, player, shield);
 
 var Drawer = require('./drawer.js');
-Drawer(canvas, a);
+Drawer(canvas, ctx);
 
 var Mover = require('./mover.js');
-Mover(canvas, a);
+Mover(canvas, ctx);
 
 window.resetGame = function () {
   objectArrays.missiles.splice(0,objectArrays.missiles.length);
@@ -75,48 +75,48 @@ window.setupGame = function () {
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
 };
 
-a.drawObjects = function () {
-    a.drawSky();
-    a.drawCity();
-    a.drawRockets();
-    a.drawExplosions();
-    a.drawMissiles();
-    a.drawCarrier();
-    a.drawLunamods();
-    a.drawPowerups();
-    a.drawMoon();
-    a.drawHealthBar();
-    a.drawPlayer();
+ctx.drawObjects = function () {
+    ctx.drawSky();
+    ctx.drawCity();
+    ctx.drawRockets();
+    ctx.drawExplosions();
+    ctx.drawMissiles();
+    ctx.drawCarrier();
+    ctx.drawLunamods();
+    ctx.drawPowerups();
+    ctx.drawMoon();
+    ctx.drawHealthBar();
+    ctx.drawPlayer();
   };
 
-  a.moveObjects = function () {
-    a.moveRockets();
-    a.moveMissiles();
-    a.moveGhosts();
-    a.moveCarrier();
-    a.moveLunamods();
-    a.movePowerups();
-    a.movePlayer();
+  ctx.moveObjects = function () {
+    ctx.moveRockets();
+    ctx.moveMissiles();
+    ctx.moveGhosts();
+    ctx.moveCarrier();
+    ctx.moveLunamods();
+    ctx.movePowerups();
+    ctx.movePlayer();
   };
 
   setupGame();
   setInterval(function() {
 
-    a.clearRect(0, 0, canvas.width, canvas.height);
-    a.fillStyle = "black";
-    a.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    a.moveObjects();
+    ctx.moveObjects();
 
     attacker.deployGhost();
 
     if (shield.health < 0 || player.health <= 0) {
-      a.drawReload();
+      ctx.drawReload();
     }
 
-    a.drawObjects();
+    ctx.drawObjects();
 
-    if (attacker.start > 0) { a.drawStartScreen() ;}
-    if (shield.health <= 0 || player.health <= 0) { a.drawReload() ;}
+    if (attacker.start > 0) { ctx.drawStartScreen() ;}
+    if (shield.health <= 0 || player.health <= 0) { ctx.drawReload() ;}
   }, 32);
 };

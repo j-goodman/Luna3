@@ -1,4 +1,4 @@
-var mover = function (canvas, a) {
+var mover = function (canvas, ctx) {
 
   var shield = require('./objects/shield.js');
   var player = require('./objects/player.js');
@@ -13,7 +13,7 @@ var mover = function (canvas, a) {
   var lunamods = require('./objectArrays.js').lunamods;
   var powerups = require('./objectArrays.js').powerups;
 
-  a.movePlayer = function () {
+  ctx.movePlayer = function () {
     if (player.health > 0) {
       player.x += player.xspeed;
       player.angle += player.spin;
@@ -47,7 +47,7 @@ var mover = function (canvas, a) {
     }
   };
 
-  a.moveRockets = function () {
+  ctx.moveRockets = function () {
     rockets.forEach(function (rocket) {
       if (rocket) {
         rocket.x += rocket.xspeed;
@@ -88,7 +88,7 @@ var mover = function (canvas, a) {
     });
   };
 
-  a.moveMissiles = function () {
+  ctx.moveMissiles = function () {
     missiles.forEach(function (missile) {
       if (missile) {
         missile.x += missile.xspeed;
@@ -115,7 +115,7 @@ var mover = function (canvas, a) {
     });
   };
 
-  a.moveGhosts = function () {
+  ctx.moveGhosts = function () {
     ghosts.forEach(function (ghost) {
       if (ghost) {
         ghost.x += ghost.xspeed;
@@ -126,7 +126,7 @@ var mover = function (canvas, a) {
     });
   };
 
-  a.movePowerups = function () {
+  ctx.movePowerups = function () {
     powerups.forEach(function (powerup) {
       if (powerup) {
         if (powerup.y < 490) {
@@ -142,13 +142,13 @@ var mover = function (canvas, a) {
     });
   };
 
-  a.moveCarrier = function () {
+  ctx.moveCarrier = function () {
     if (carrier) {
       carrier.move(canvas);
     }
   };
 
-  a.moveLunamods = function () {
+  ctx.moveLunamods = function () {
     lunamods.forEach(function (lunamod) {
       //HOVER
       if (lunamod.y > lunamod.hoverHeight) {
