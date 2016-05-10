@@ -22,6 +22,12 @@ var Ghost = function (x, y, degrees, idx) {
   this.destroy = function () {
     ghosts[this.idx] = undefined;
   };
+  this.move = function (canvas) {
+    this.x += this.xspeed;
+    this.y += this.yspeed;
+    if ( this.y < -32 || this.x < -32 || this.x > canvas.width+32) { this.deploy(); }
+    if ( this.y > canvas.height+32 ) { this.destroy(); }
+  };
 };
 
 module.exports = Ghost;

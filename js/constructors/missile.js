@@ -1,6 +1,7 @@
 var Explosion = require('./explosion.js');
 var Missile = require('./missile.js');
 var player = require('../objects/player.js');
+var shield = require('../objects/shield.js');
 
 var rockets = require('../objectArrays.js').rockets;
 var missiles = require('../objectArrays.js').missiles;
@@ -62,6 +63,28 @@ var Missile = function (x, y, xspeed, yspeed, idx) {
     else {clock = 6;}
     return clock;
   }.bind(this);
+  this.move = function () {
+    this.x += this.xspeed;
+    this.y += this.yspeed;
+    this.xspeed += this.xaccel;
+    this.yspeed += this.yaccel;
+    this.degrees = Math.atan(this.yspeed/this.xspeed)*RADIANS;
+    if (this.xspeed < 0) {
+      this.degrees += 180;
+    }
+    if (this.rocketCollide()) {
+      this.destroy();
+    }
+    if ( this.y > 484 ) {
+      this.destroy();
+      if ( this.x > 385 && this.x < 540) {
+        shield.health -= 2;
+      }
+      if (this.x > player.x-16 && this.x < player.x+16) {
+        player.health -= 3;
+      }
+    }
+  };
 };
 
 module.exports = Missile;

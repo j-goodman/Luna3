@@ -26,6 +26,17 @@ var Powerup = function (x, y, type, sprite, idx, player) {
       powerups[this.idx] = undefined;
     }
   };
+  this.move = function () {
+    if (this.y < 490) {
+      this.y += this.yspeed;
+    } else {
+      this.y = 490;
+    }
+    if (this.yspeed < 4) {
+      this.yspeed += this.yaccel;
+    }
+    this.playerCollide();
+  };
 };
 
 module.exports = Powerup;

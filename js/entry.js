@@ -41,9 +41,6 @@ keyEvents(document, player, shield);
 var Drawer = require('./drawer.js');
 Drawer(canvas, ctx);
 
-var Mover = require('./mover.js');
-Mover(canvas, ctx);
-
 window.resetGame = function () {
   objectArrays.missiles.splice(0,objectArrays.missiles.length);
   objectArrays.rockets.splice(0,objectArrays.rockets.length);
@@ -68,7 +65,7 @@ window.resetGame = function () {
 window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length));
+  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length, canvas));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
@@ -90,10 +87,18 @@ ctx.drawObjects = function () {
   };
 
   ctx.moveObjects = function () {
-    ctx.moveMissiles();
-    ctx.moveGhosts();
-    ctx.moveLunamods();
-    ctx.movePowerups();
+    objectArrays.missiles.forEach(function (missile) {
+      if (missile) { missile.move(); }
+    });
+    objectArrays.ghosts.forEach(function (ghost) {
+      if (ghost) { ghost.move(canvas); }
+    });
+    objectArrays.lunamods.forEach(function (lunamod) {
+      if (lunamod) { lunamod.move(); }
+    });
+    objectArrays.powerups.forEach(function (powerup) {
+      if (powerup) { powerup.move(); }
+    });
     objectArrays.rockets.forEach(function (rocket) {
       if (rocket && !rocket.move) {
         console.log(rocket);
