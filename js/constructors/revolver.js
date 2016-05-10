@@ -35,6 +35,7 @@ var Koopashell = function (x, y, degrees, power, idx) {
   this.destroy = function () {
     rockets[idx] = undefined;
   };
+  this.move = Rocket.prototype.move;
 };
 
 module.exports = Revolver;

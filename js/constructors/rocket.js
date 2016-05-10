@@ -18,8 +18,41 @@ var Rocket = function (x, y, degrees, power, idx) {
   };
 };
 
-Rocket.prototype.destroy = function () {
-
-};
+Rocket.prototype.move = function (player) {
+  this.x += this.xspeed;
+  this.y += this.yspeed;
+  this.yspeed += this.yaccel;
+  this.degrees = Math.atan(this.yspeed/this.xspeed)*RADIANS;
+  if (this.xspeed < 0) {
+    this.degrees += 180;
+  }
+  if ( this.y > 500 ) {
+    this.destroy();
+    if (this.x > player.x-16 && this.x < player.x+16) {
+      player.health -= 2;
+    }
+  }
+  switch(this.type) {
+    case "laser":
+      this.checkLaser();
+      if (this.firingLaser) {this.firingLaser++;}
+      if (this.firingLaser && this.firingLaser>8) {
+        this.stopLaser();
+      }
+      break;
+    case "revolver":
+      this.timer -= 5;
+      if (this.timer < 0 ) {
+        this.deployKoopashells();
+      }
+      break;
+    case "koopashell":
+      this.timer -= 1;
+      if (this.timer < 0) {
+        this.destroy();
+      }
+      break;
+    }
+  };
 
 module.exports = Rocket;

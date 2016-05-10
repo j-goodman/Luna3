@@ -12,8 +12,8 @@ var Laser = function (x, y, degrees, power, idx) {
   this.checkLaser = function () {
     missiles.forEach(function (missile, idx) {
       if (missile) {
-        if ((missile.x > this.x-120 && missile.x < this.x+120) &&
-        (missile.y > this.y-120 && missile.y < this.y+120)) {
+        if ((missile.x > this.x-130 && missile.x < this.x+130) &&
+        (missile.y > this.y-130 && missile.y < this.y+130)) {
           this.fireLaser(missile);
         }
       }

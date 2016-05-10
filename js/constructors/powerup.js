@@ -1,7 +1,6 @@
-var player = require('../objects/player.js');
 var powerups = require('../objectArrays.js').powerups;
 
-var Powerup = function (x, y, type, sprite, idx) {
+var Powerup = function (x, y, type, sprite, idx, player) {
   this.x = x;
   this.y = y;
   this.idx = idx;

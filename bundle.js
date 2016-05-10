@@ -115,10 +115,10 @@
 	  objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 	  objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
 	  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length));
-	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
-	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
-	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
-	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
+	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length, player));
 	};
 	
 	ctx.drawObjects = function () {
@@ -127,22 +127,28 @@
 	    ctx.drawRockets();
 	    ctx.drawExplosions();
 	    ctx.drawMissiles();
-	    ctx.drawCarrier();
 	    ctx.drawLunamods();
 	    ctx.drawPowerups();
 	    ctx.drawMoon();
 	    ctx.drawHealthBar();
-	    ctx.drawPlayer();
+	    carrier.draw(ctx);
+	    player.draw(ctx);
 	  };
 	
 	  ctx.moveObjects = function () {
-	    ctx.moveRockets();
 	    ctx.moveMissiles();
 	    ctx.moveGhosts();
-	    ctx.moveCarrier();
 	    ctx.moveLunamods();
 	    ctx.movePowerups();
-	    ctx.movePlayer();
+	    objectArrays.rockets.forEach(function (rocket) {
+	      if (rocket && !rocket.move) {
+	        console.log(rocket);
+	        rocket.destroy();
+	      }
+	      if (rocket) { rocket.move(player); }
+	    });
+	    carrier.move(canvas, player);
+	    player.move(canvas);
 	  };
 	
 	  setupGame();
@@ -362,6 +368,9 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var lunamods = __webpack_require__(3).lunamods;
+	var powerups = __webpack_require__(3).powerups;
+	var carrier = __webpack_require__(17);
 	var rockets = __webpack_require__(3).rockets;
 	var Rocket = __webpack_require__(8);
 	var Magnet = __webpack_require__(10);
@@ -417,7 +426,54 @@
 	      player.ammoIndex += 1;
 	    }
 	    player.ammoType = Object.keys(player.ammoStore)[player.ammoIndex];
-	  }
+	  },
+	  draw: function (ctx) {
+	    ctx.save();
+	    ctx.translate(player.x, player.y);
+	    ctx.rotate((player.angle+90)*DEGREES);
+	    ctx.translate(-16, -19);
+	    if (player.health > 0) {
+	      ctx.drawImage(player.launcherSprite, 0, 0, 32, 32);
+	    } else {
+	      ctx.drawImage(player.blastedSprite, 0, 0, 32, 32);
+	      player.y = 489;
+	    }
+	    ctx.restore();
+	    ctx.drawImage(player.chassisSprite, player.x-16, player.y-19, 32, 32);
+	  },
+	  move: function (canvas) {
+	    if (player.health > 0) {
+	        player.x += player.xspeed;
+	        player.angle += player.spin;
+	        if (player.angle < 210) {player.angle = 210;}
+	        if (player.angle > 330) {player.angle = 330;}
+	        player.cooldown -= 1;
+	        if (player.overheat > 2) {
+	          player.overheat -= 3;
+	        }
+	        //WRAP WHEN OUTSIDE SCREEN
+	        if (player.x > canvas.width + 32) {
+	          player.x = -16;
+	        } else if (player.x < -32) {
+	          player.x = canvas.width + 16;
+	        }
+	
+	        if (player.ammoStore["rocket"] !== 2) {
+	          player.ammoStore["rocket"] = 2;
+	        }
+	
+	      } else {
+	        carrier.destroyed = true;
+	        lunamods.forEach( function (lunamod) {
+	          lunamod.destroy();
+	        });
+	        powerups.forEach( function (powerup) {
+	          if (powerup) {
+	            powerup.destroy();
+	          }
+	        });
+	      }
+	    }
 	};
 	
 	module.exports = player;
@@ -447,9 +503,42 @@
 	  };
 	};
 	
-	Rocket.prototype.destroy = function () {
-	
-	};
+	Rocket.prototype.move = function (player) {
+	  this.x += this.xspeed;
+	  this.y += this.yspeed;
+	  this.yspeed += this.yaccel;
+	  this.degrees = Math.atan(this.yspeed/this.xspeed)*RADIANS;
+	  if (this.xspeed < 0) {
+	    this.degrees += 180;
+	  }
+	  if ( this.y > 500 ) {
+	    this.destroy();
+	    if (this.x > player.x-16 && this.x < player.x+16) {
+	      player.health -= 2;
+	    }
+	  }
+	  switch(this.type) {
+	    case "laser":
+	      this.checkLaser();
+	      if (this.firingLaser) {this.firingLaser++;}
+	      if (this.firingLaser && this.firingLaser>8) {
+	        this.stopLaser();
+	      }
+	      break;
+	    case "revolver":
+	      this.timer -= 5;
+	      if (this.timer < 0 ) {
+	        this.deployKoopashells();
+	      }
+	      break;
+	    case "koopashell":
+	      this.timer -= 1;
+	      if (this.timer < 0) {
+	        this.destroy();
+	      }
+	      break;
+	    }
+	  };
 	
 	module.exports = Rocket;
 
@@ -541,8 +630,8 @@
 	  this.checkLaser = function () {
 	    missiles.forEach(function (missile, idx) {
 	      if (missile) {
-	        if ((missile.x > this.x-120 && missile.x < this.x+120) &&
-	        (missile.y > this.y-120 && missile.y < this.y+120)) {
+	        if ((missile.x > this.x-130 && missile.x < this.x+130) &&
+	        (missile.y > this.y-130 && missile.y < this.y+130)) {
 	          this.fireLaser(missile);
 	        }
 	      }
@@ -605,6 +694,7 @@
 	  this.destroy = function () {
 	    rockets[idx] = undefined;
 	  };
+	  this.move = Rocket.prototype.move;
 	};
 	
 	module.exports = Revolver;
@@ -697,30 +787,30 @@
 	  xspeed: 6,
 	  destroyed: false,
 	  sprite: "carrier_3",
-	  rocketCollide: function () {
+	  rocketCollide: function (player) {
 	    rockets.forEach(function (rocket, idx) {
 	      if (rocket) {
 	        if ((rocket.x > this.x-36 && rocket.x < this.x+36) &&
 	        (rocket.y > this.y-36 && rocket.y < this.y+36)) {
 	          player.score += 100;
 	          rocket.destroy();
-	          this.destroy();
+	          this.destroy(player);
 	        }
 	      }
 	    }.bind(this));
 	  },
-	  destroy: function () {
-	      for (var i=0; i<2; i++) {
+	  destroy: function (player) {
+	      for (var i=0; i<5; i++) {
 	        var dice = Math.random();
 	        this.destroyed = true;
 	        if (dice > 0.75) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "laser", "3_laser", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "laser", "3_laser", powerups.length, player));
 	        } else if (dice > 0.5) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "magnet", "3_magnet", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "magnet", "3_magnet", powerups.length, player));
 	        } else if (dice > 0.25) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "revolver", "3_revolver", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "revolver", "3_revolver", powerups.length, player));
 	        } else {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length, player));
 	        }
 	      }
 	
@@ -732,7 +822,7 @@
 	      this.x = 30000;
 	
 	    },
-	    move: function (canvas) {
+	    move: function (canvas, player) {
 	      carrier.x += carrier.xspeed;
 	      if (carrier.x > 30000) {
 	        carrier.xspeed = -6;
@@ -745,7 +835,12 @@
 	        carrier.destroyed = false;
 	        carrier.y = Math.random()*canvas.height/2+12;
 	      }
-	      carrier.rocketCollide();
+	      carrier.rocketCollide(player);
+	    },
+	    draw: function (ctx) {
+	      if (!carrier.destroyed) {
+	        ctx.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
+	      }
 	    }
 	};
 	
@@ -756,10 +851,9 @@
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var player = __webpack_require__(7);
 	var powerups = __webpack_require__(3).powerups;
 	
-	var Powerup = function (x, y, type, sprite, idx) {
+	var Powerup = function (x, y, type, sprite, idx, player) {
 	  this.x = x;
 	  this.y = y;
 	  this.idx = idx;
@@ -830,15 +924,15 @@
 	      explosions.push(new Explosion(this.x, this.y, explosions.length));
 	    } else {
 	      var dice = Math.random();
-	      for (i=0; i < dice*6.25; i++) {
+	      for (i=0; i < dice*8; i++) {
 	        if (dice > 0.75) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "laser", "3_laser", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "laser", "3_laser", powerups.length, player));
 	        } else if (dice > 0.5) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length, player));
 	        } else if (dice > 0.25) {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "revolver", "3_revolver", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "revolver", "3_revolver", powerups.length, player));
 	        } else {
-	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length));
+	          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length, player));
 	        }
 	        dice += 0.5;
 	        if (dice>1) {dice--;}
@@ -1098,22 +1192,6 @@
 	    ctx.fillRect(0, 500, canvas.width, 100);
 	  };
 	
-	  ctx.drawPlayer = function () {
-	      ctx.save();
-	      ctx.translate(player.x, player.y);
-	      ctx.rotate((player.angle+90)*DEGREES);
-	      ctx.translate(-16, -19);
-	      if (player.health > 0) {
-	        ctx.drawImage(player.launcherSprite, 0, 0, 32, 32);
-	      } else {
-	        ctx.drawImage(player.blastedSprite, 0, 0, 32, 32);
-	        player.y = 489;
-	      }
-	      ctx.restore();
-	    ctx.drawImage(player.chassisSprite, player.x-16, player.y-19, 32, 32);
-	  };
-	
-	  // ROCKETS are the player's defensive projectiles, MISSILES are the incoming enemy bombs
 	  ctx.drawRockets = function () {
 	    rockets.forEach(function (rocket) {
 	      if (rocket) {
@@ -1141,12 +1219,6 @@
 	    ctx.lineTo(rocket.target.x, rocket.target.y);
 	    ctx.stroke();
 	    ctx.globalAlpha = 1;
-	  };
-	
-	  ctx.drawCarrier = function () {
-	    if (!carrier.destroyed) {
-	      ctx.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
-	    }
 	  };
 	
 	  ctx.drawExplosions = function () {
@@ -1345,81 +1417,6 @@
 	  var lunamods = __webpack_require__(3).lunamods;
 	  var powerups = __webpack_require__(3).powerups;
 	
-	  ctx.movePlayer = function () {
-	    if (player.health > 0) {
-	      player.x += player.xspeed;
-	      player.angle += player.spin;
-	      if (player.angle < 210) {player.angle = 210;}
-	      if (player.angle > 330) {player.angle = 330;}
-	      player.cooldown -= 1;
-	      if (player.overheat > 2) {
-	        player.overheat -= 3;
-	      }
-	      //WRAP WHEN OUTSIDE SCREEN
-	      if (player.x > canvas.width + 32) {
-	        player.x = -16;
-	      } else if (player.x < -32) {
-	        player.x = canvas.width + 16;
-	      }
-	
-	      if (player.ammoStore["rocket"] !== 2) {
-	        player.ammoStore["rocket"] = 2;
-	      }
-	
-	    } else {
-	      carrier.destroyed = true;
-	      lunamods.forEach( function (lunamod) {
-	        lunamod.destroy();
-	      });
-	      powerups.forEach( function (powerup) {
-	        if (powerup) {
-	          powerup.destroy();
-	        }
-	      });
-	    }
-	  };
-	
-	  ctx.moveRockets = function () {
-	    rockets.forEach(function (rocket) {
-	      if (rocket) {
-	        rocket.x += rocket.xspeed;
-	        rocket.y += rocket.yspeed;
-	        rocket.yspeed += rocket.yaccel;
-	        rocket.degrees = Math.atan(rocket.yspeed/rocket.xspeed)*RADIANS;
-	        if (rocket.xspeed < 0) {
-	          rocket.degrees += 180;
-	        }
-	        if ( rocket.y > 500 ) {
-	          rocket.destroy();
-	          if (rocket.x > player.x-16 && rocket.x < player.x+16) {
-	            player.health -= 2;
-	          }
-	        }
-	        switch(rocket.type) {
-	          case "laser":
-	            rocket.checkLaser();
-	            if (rocket.firingLaser) {rocket.firingLaser++;}
-	            if (rocket.firingLaser && rocket.firingLaser>8) {
-	              rocket.stopLaser();
-	            }
-	            break;
-	          case "revolver":
-	            rocket.timer -= 5;
-	            if (rocket.timer < 0 ) {
-	              rocket.deployKoopashells();
-	            }
-	            break;
-	          case "koopashell":
-	            rocket.timer -= 1;
-	            if (rocket.timer < 0) {
-	              rocket.destroy();
-	            }
-	            break;
-	          }
-	      }
-	    });
-	  };
-	
 	  ctx.moveMissiles = function () {
 	    missiles.forEach(function (missile) {
 	      if (missile) {
@@ -1472,12 +1469,6 @@
 	        powerup.playerCollide();
 	      }
 	    });
-	  };
-	
-	  ctx.moveCarrier = function () {
-	    if (carrier) {
-	      carrier.move(canvas);
-	    }
 	  };
 	
 	  ctx.moveLunamods = function () {

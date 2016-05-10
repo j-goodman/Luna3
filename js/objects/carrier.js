@@ -13,30 +13,30 @@ var carrier = {
   xspeed: 6,
   destroyed: false,
   sprite: "carrier_3",
-  rocketCollide: function () {
+  rocketCollide: function (player) {
     rockets.forEach(function (rocket, idx) {
       if (rocket) {
         if ((rocket.x > this.x-36 && rocket.x < this.x+36) &&
         (rocket.y > this.y-36 && rocket.y < this.y+36)) {
           player.score += 100;
           rocket.destroy();
-          this.destroy();
+          this.destroy(player);
         }
       }
     }.bind(this));
   },
-  destroy: function () {
-      for (var i=0; i<2; i++) {
+  destroy: function (player) {
+      for (var i=0; i<5; i++) {
         var dice = Math.random();
         this.destroyed = true;
         if (dice > 0.75) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "laser", "3_laser", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "laser", "3_laser", powerups.length, player));
         } else if (dice > 0.5) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "magnet", "3_magnet", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "magnet", "3_magnet", powerups.length, player));
         } else if (dice > 0.25) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "revolver", "3_revolver", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "revolver", "3_revolver", powerups.length, player));
         } else {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y, "clusterbomb", "3_clusterbomb", powerups.length, player));
         }
       }
 
@@ -48,7 +48,7 @@ var carrier = {
       this.x = 30000;
 
     },
-    move: function (canvas) {
+    move: function (canvas, player) {
       carrier.x += carrier.xspeed;
       if (carrier.x > 30000) {
         carrier.xspeed = -6;
@@ -61,7 +61,12 @@ var carrier = {
         carrier.destroyed = false;
         carrier.y = Math.random()*canvas.height/2+12;
       }
-      carrier.rocketCollide();
+      carrier.rocketCollide(player);
+    },
+    draw: function (ctx) {
+      if (!carrier.destroyed) {
+        ctx.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
+      }
     }
 };
 

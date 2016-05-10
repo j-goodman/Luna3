@@ -13,81 +13,6 @@ var mover = function (canvas, ctx) {
   var lunamods = require('./objectArrays.js').lunamods;
   var powerups = require('./objectArrays.js').powerups;
 
-  ctx.movePlayer = function () {
-    if (player.health > 0) {
-      player.x += player.xspeed;
-      player.angle += player.spin;
-      if (player.angle < 210) {player.angle = 210;}
-      if (player.angle > 330) {player.angle = 330;}
-      player.cooldown -= 1;
-      if (player.overheat > 2) {
-        player.overheat -= 3;
-      }
-      //WRAP WHEN OUTSIDE SCREEN
-      if (player.x > canvas.width + 32) {
-        player.x = -16;
-      } else if (player.x < -32) {
-        player.x = canvas.width + 16;
-      }
-
-      if (player.ammoStore["rocket"] !== 2) {
-        player.ammoStore["rocket"] = 2;
-      }
-
-    } else {
-      carrier.destroyed = true;
-      lunamods.forEach( function (lunamod) {
-        lunamod.destroy();
-      });
-      powerups.forEach( function (powerup) {
-        if (powerup) {
-          powerup.destroy();
-        }
-      });
-    }
-  };
-
-  ctx.moveRockets = function () {
-    rockets.forEach(function (rocket) {
-      if (rocket) {
-        rocket.x += rocket.xspeed;
-        rocket.y += rocket.yspeed;
-        rocket.yspeed += rocket.yaccel;
-        rocket.degrees = Math.atan(rocket.yspeed/rocket.xspeed)*RADIANS;
-        if (rocket.xspeed < 0) {
-          rocket.degrees += 180;
-        }
-        if ( rocket.y > 500 ) {
-          rocket.destroy();
-          if (rocket.x > player.x-16 && rocket.x < player.x+16) {
-            player.health -= 2;
-          }
-        }
-        switch(rocket.type) {
-          case "laser":
-            rocket.checkLaser();
-            if (rocket.firingLaser) {rocket.firingLaser++;}
-            if (rocket.firingLaser && rocket.firingLaser>8) {
-              rocket.stopLaser();
-            }
-            break;
-          case "revolver":
-            rocket.timer -= 5;
-            if (rocket.timer < 0 ) {
-              rocket.deployKoopashells();
-            }
-            break;
-          case "koopashell":
-            rocket.timer -= 1;
-            if (rocket.timer < 0) {
-              rocket.destroy();
-            }
-            break;
-          }
-      }
-    });
-  };
-
   ctx.moveMissiles = function () {
     missiles.forEach(function (missile) {
       if (missile) {
@@ -140,12 +65,6 @@ var mover = function (canvas, ctx) {
         powerup.playerCollide();
       }
     });
-  };
-
-  ctx.moveCarrier = function () {
-    if (carrier) {
-      carrier.move(canvas);
-    }
   };
 
   ctx.moveLunamods = function () {

@@ -1,3 +1,6 @@
+var lunamods = require('../objectArrays.js').lunamods;
+var powerups = require('../objectArrays.js').powerups;
+var carrier = require('./carrier.js');
 var rockets = require('../objectArrays.js').rockets;
 var Rocket = require('../constructors/rocket.js');
 var Magnet = require('../constructors/magnet.js');
@@ -53,7 +56,54 @@ var player = {
       player.ammoIndex += 1;
     }
     player.ammoType = Object.keys(player.ammoStore)[player.ammoIndex];
-  }
+  },
+  draw: function (ctx) {
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.rotate((player.angle+90)*DEGREES);
+    ctx.translate(-16, -19);
+    if (player.health > 0) {
+      ctx.drawImage(player.launcherSprite, 0, 0, 32, 32);
+    } else {
+      ctx.drawImage(player.blastedSprite, 0, 0, 32, 32);
+      player.y = 489;
+    }
+    ctx.restore();
+    ctx.drawImage(player.chassisSprite, player.x-16, player.y-19, 32, 32);
+  },
+  move: function (canvas) {
+    if (player.health > 0) {
+        player.x += player.xspeed;
+        player.angle += player.spin;
+        if (player.angle < 210) {player.angle = 210;}
+        if (player.angle > 330) {player.angle = 330;}
+        player.cooldown -= 1;
+        if (player.overheat > 2) {
+          player.overheat -= 3;
+        }
+        //WRAP WHEN OUTSIDE SCREEN
+        if (player.x > canvas.width + 32) {
+          player.x = -16;
+        } else if (player.x < -32) {
+          player.x = canvas.width + 16;
+        }
+
+        if (player.ammoStore["rocket"] !== 2) {
+          player.ammoStore["rocket"] = 2;
+        }
+
+      } else {
+        carrier.destroyed = true;
+        lunamods.forEach( function (lunamod) {
+          lunamod.destroy();
+        });
+        powerups.forEach( function (powerup) {
+          if (powerup) {
+            powerup.destroy();
+          }
+        });
+      }
+    }
 };
 
 module.exports = player;

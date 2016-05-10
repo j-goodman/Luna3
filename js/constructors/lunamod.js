@@ -34,15 +34,15 @@ var Lunamod = function (x, y, idx) {
       explosions.push(new Explosion(this.x, this.y, explosions.length));
     } else {
       var dice = Math.random();
-      for (i=0; i < dice*6.25; i++) {
+      for (i=0; i < dice*8; i++) {
         if (dice > 0.75) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "laser", "3_laser", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "laser", "3_laser", powerups.length, player));
         } else if (dice > 0.5) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "magnet", "3_magnet", powerups.length, player));
         } else if (dice > 0.25) {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "revolver", "3_revolver", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "revolver", "3_revolver", powerups.length, player));
         } else {
-          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length));
+          powerups.push(new Powerup(this.x+(Math.random()*64)-32, this.y-16, "clusterbomb", "3_clusterbomb", powerups.length, player));
         }
         dice += 0.5;
         if (dice>1) {dice--;}

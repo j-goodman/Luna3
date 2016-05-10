@@ -157,22 +157,6 @@ var Explosion = require('./constructors/Explosion');
     ctx.fillRect(0, 500, canvas.width, 100);
   };
 
-  ctx.drawPlayer = function () {
-      ctx.save();
-      ctx.translate(player.x, player.y);
-      ctx.rotate((player.angle+90)*DEGREES);
-      ctx.translate(-16, -19);
-      if (player.health > 0) {
-        ctx.drawImage(player.launcherSprite, 0, 0, 32, 32);
-      } else {
-        ctx.drawImage(player.blastedSprite, 0, 0, 32, 32);
-        player.y = 489;
-      }
-      ctx.restore();
-    ctx.drawImage(player.chassisSprite, player.x-16, player.y-19, 32, 32);
-  };
-
-  // ROCKETS are the player's defensive projectiles, MISSILES are the incoming enemy bombs
   ctx.drawRockets = function () {
     rockets.forEach(function (rocket) {
       if (rocket) {
@@ -200,12 +184,6 @@ var Explosion = require('./constructors/Explosion');
     ctx.lineTo(rocket.target.x, rocket.target.y);
     ctx.stroke();
     ctx.globalAlpha = 1;
-  };
-
-  ctx.drawCarrier = function () {
-    if (!carrier.destroyed) {
-      ctx.drawImage(document.getElementById(carrier.sprite), carrier.x, carrier.y, 64, 48);
-    }
   };
 
   ctx.drawExplosions = function () {

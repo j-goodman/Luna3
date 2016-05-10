@@ -69,10 +69,10 @@ window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
   objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length));
-  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length));
-  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length));
-  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length));
-  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length));
+  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
+  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
+  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
+  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -26000, "magnet", "3_magnet", objectArrays.powerups.length, player));
 };
 
 ctx.drawObjects = function () {
@@ -81,22 +81,28 @@ ctx.drawObjects = function () {
     ctx.drawRockets();
     ctx.drawExplosions();
     ctx.drawMissiles();
-    ctx.drawCarrier();
     ctx.drawLunamods();
     ctx.drawPowerups();
     ctx.drawMoon();
     ctx.drawHealthBar();
-    ctx.drawPlayer();
+    carrier.draw(ctx);
+    player.draw(ctx);
   };
 
   ctx.moveObjects = function () {
-    ctx.moveRockets();
     ctx.moveMissiles();
     ctx.moveGhosts();
-    ctx.moveCarrier();
     ctx.moveLunamods();
     ctx.movePowerups();
-    ctx.movePlayer();
+    objectArrays.rockets.forEach(function (rocket) {
+      if (rocket && !rocket.move) {
+        console.log(rocket);
+        rocket.destroy();
+      }
+      if (rocket) { rocket.move(player); }
+    });
+    carrier.move(canvas, player);
+    player.move(canvas);
   };
 
   setupGame();
