@@ -175,7 +175,7 @@
 	
 	    if (attacker.start > 0) { ctx.drawStartScreen() ;}
 	    if (shield.health <= 0 || player.health <= 0) { ctx.drawReload() ;}
-	  }, 16);
+	  }, 32);
 	};
 
 
