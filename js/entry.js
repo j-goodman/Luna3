@@ -61,11 +61,11 @@ window.resetGame = function () {
   attacker.start = 300;
   shield.health = 24;
 };
-
+//19900
 window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length, canvas));
+  objectArrays.lunamods.push(new Lunamod(16500, 80, objectArrays.lunamods.length, canvas));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
@@ -129,5 +129,5 @@ ctx.drawObjects = function () {
 
     if (attacker.start > 0) { ctx.drawStartScreen() ;}
     if (shield.health <= 0 || player.health <= 0) { ctx.drawReload() ;}
-  }, 32);
+  }, 16);
 };

@@ -6,7 +6,7 @@ var Powerup = function (x, y, type, sprite, idx, player) {
   this.idx = idx;
   this.type = type;
   this.sprite = sprite;
-  this.yspeed = Math.random()*(-12);
+  this.yspeed = Math.random()*(-6);
   this.yaccel = 0.2;
   this.playerCollide = function () {
     if ((player.x > this.x-19 && player.x < this.x+19) &&

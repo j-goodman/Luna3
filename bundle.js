@@ -107,11 +107,11 @@
 	  attacker.start = 300;
 	  shield.health = 24;
 	};
-	
+	//19900
 	window.setupGame = function () {
 	  objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 	  objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-	  objectArrays.lunamods.push(new Lunamod(19900, 80, objectArrays.lunamods.length, canvas));
+	  objectArrays.lunamods.push(new Lunamod(16500, 80, objectArrays.lunamods.length, canvas));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
@@ -175,7 +175,7 @@
 	
 	    if (attacker.start > 0) { ctx.drawStartScreen() ;}
 	    if (shield.health <= 0 || player.health <= 0) { ctx.drawReload() ;}
-	  }, 32);
+	  }, 16);
 	};
 
 
@@ -604,7 +604,7 @@
 	  this.idx = idx;
 	  this.type = type;
 	  this.sprite = sprite;
-	  this.yspeed = Math.random()*(-12);
+	  this.yspeed = Math.random()*(-6);
 	  this.yaccel = 0.2;
 	  this.playerCollide = function () {
 	    if ((player.x > this.x-19 && player.x < this.x+19) &&
@@ -992,7 +992,7 @@
 	      explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
 	      this.ammo = 8;
 	      this.hoverHeight = 100;
-	      this.x = 30000;
+	      this.x = 16000;
 	    }
 	  };
 	  this.hover = function () {
@@ -1036,11 +1036,14 @@
 	        this.ammo = 11;
 	      }
 	    }
-	    //BE VULNERABLE TO ROCKETS
-	    this.rocketCollide();
+	    //BE VULNERABLE TO ROCKETS WHEN ON SCREEN
+	    if (this.x > 0 && this.x < canvas.width && this.y > 0) {
+	      this.rocketCollide();
+	    }
 	    //REGULATE HEIGHT WHEN OFF SCREEN
-	    if (this.x < -100 || this.x > canvas.width+100) {
+	    if (this.x < -200 || this.x > canvas.width+300) {
 	      this.y = this.hoverHeight;
+	      this.hoverHeight = 100;
 	    }
 	    //ENACT SPEED AND ACCEL
 	    if ((this.yspeed < 10 && this.yaccel > 0)||(this.yspeed > -10 && this.yaccel < 0)) {

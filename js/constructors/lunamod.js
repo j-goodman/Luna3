@@ -57,7 +57,7 @@ var Lunamod = function (x, y, idx, canvas) {
       explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
       this.ammo = 8;
       this.hoverHeight = 100;
-      this.x = 30000;
+      this.x = 16000;
     }
   };
   this.hover = function () {
@@ -101,11 +101,14 @@ var Lunamod = function (x, y, idx, canvas) {
         this.ammo = 11;
       }
     }
-    //BE VULNERABLE TO ROCKETS
-    this.rocketCollide();
+    //BE VULNERABLE TO ROCKETS WHEN ON SCREEN
+    if (this.x > 0 && this.x < canvas.width && this.y > 0) {
+      this.rocketCollide();
+    }
     //REGULATE HEIGHT WHEN OFF SCREEN
-    if (this.x < -100 || this.x > canvas.width+100) {
+    if (this.x < -200 || this.x > canvas.width+300) {
       this.y = this.hoverHeight;
+      this.hoverHeight = 100;
     }
     //ENACT SPEED AND ACCEL
     if ((this.yspeed < 10 && this.yaccel > 0)||(this.yspeed > -10 && this.yaccel < 0)) {
