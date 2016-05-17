@@ -77,6 +77,7 @@ var Lunamod = function (x, y, idx, canvas) {
     }
     //DROP AND RISE
     var dice = Math.random()*900;
+    
     //FOLLOW PLAYER
     if (dice < 200) {
       if (this.x > player.x) {
