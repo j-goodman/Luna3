@@ -50,14 +50,14 @@ var Lunamod = function (x, y, idx, canvas) {
         if (dice>1) {dice--;}
       }
       if (lunamods.length <= 1) {
-        lunamods.push(new Lunamod(-54000, 80, lunamods.length, canvas));
+        lunamods.push(new Lunamod(-26000, 80, lunamods.length, canvas));
       }
       explosions.push(new Explosion(this.x, this.y, explosions.length));
       explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
       explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
       this.ammo = 8;
       this.hoverHeight = 100;
-      this.x = 16000;
+      this.x = 8000;
     }
   };
   this.hover = function () {
@@ -77,7 +77,7 @@ var Lunamod = function (x, y, idx, canvas) {
     }
     //DROP AND RISE
     var dice = Math.random()*900;
-    
+
     //FOLLOW PLAYER
     if (dice < 200) {
       if (this.x > player.x) {

@@ -111,7 +111,7 @@
 	window.setupGame = function () {
 	  objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
 	  objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-	  objectArrays.lunamods.push(new Lunamod(16500, 80, objectArrays.lunamods.length, canvas));
+	  objectArrays.lunamods.push(new Lunamod(9600, 80, objectArrays.lunamods.length, canvas));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
 	  objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
@@ -210,7 +210,7 @@
 	    if (dice < 2 && shield.health > -1 && this.start < 30) {
 	      ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
 	    }
-	    if (Math.random()*4800 < 4) {
+	    if (Math.random()*4800 < 3) {
 	      this.burst();
 	    }
 	    if (this.start % this.rate === -0) {
@@ -219,9 +219,9 @@
 	  },
 	  burst: function () {
 	    var direction = (Math.random()*4)*30+210;
-	    // for (var i=0; i<4; i++) {
+	    for (var i=0; i<6; i++) {
 	      ghosts.push(new Ghost(450, 500, (direction+Math.random()*90)-45, ghosts.length));
-	    // }
+	    }
 	  }
 	};
 	
@@ -870,33 +870,6 @@
 	  timer: 0,
 	  sprite: document.getElementById("earth"),
 	  cloudsprite: document.getElementById("cloudcover"),
-	  explosions: [{time: 3000, x: 60, y: 200},
-	               {time: 3060, x: 80, y: 60},
-	               {time: 3070, x: 160, y: 10},
-	               {time: 3090, x: 50, y: 180},
-	               {time: 3150, x: 200, y: 80},
-	               {time: 3160, x: 90, y: 120},
-	               {time: 3190, x: 200, y: 200},
-	               {time: 3195, x: 200, y: 250},
-	               {time: 3200, x: 90, y: 90},
-	               {time: 3220, x: 60, y: 100},
-	               {time: 3260, x: 80, y: 30},
-	               {time: 3270, x: 180, y: 130},
-	               {time: 3290, x: 220, y: 30},
-	               {time: 3320, x: 180, y: 270},
-	               {time: 3360, x: 160, y: 10},
-	               {time: 3380, x: 50, y: 180},
-	               {time: 3390, x: 150, y: 100},
-	               {time: 3400, x: 220, y: 240},
-	               {time: 3420, x: 200, y: 80},
-	               {time: 3425, x: 210, y: 85},
-	               {time: 3430, x: 90, y: 120},
-	               {time: 3440, x: 280, y: 200},
-	               {time: 3440, x: 220, y: 260},
-	               {time: 3460, x: 110, y: 140},
-	               {time: 3470, x: 200, y: 200},
-	               {time: 3480, x: 100, y: 130},
-	               {time: 3490, x: 100, y: 140}, ]
 	};
 	
 	module.exports = earth;
@@ -985,14 +958,14 @@
 	        if (dice>1) {dice--;}
 	      }
 	      if (lunamods.length <= 1) {
-	        lunamods.push(new Lunamod(-54000, 80, lunamods.length, canvas));
+	        lunamods.push(new Lunamod(-26000, 80, lunamods.length, canvas));
 	      }
 	      explosions.push(new Explosion(this.x, this.y, explosions.length));
 	      explosions.push(new Explosion(this.x+16, this.y+16, explosions.length));
 	      explosions.push(new Explosion(this.x-22, this.y+8, explosions.length));
 	      this.ammo = 8;
 	      this.hoverHeight = 100;
-	      this.x = 16000;
+	      this.x = 8000;
 	    }
 	  };
 	  this.hover = function () {
@@ -1012,7 +985,7 @@
 	    }
 	    //DROP AND RISE
 	    var dice = Math.random()*900;
-	    
+	
 	    //FOLLOW PLAYER
 	    if (dice < 200) {
 	      if (this.x > player.x) {
@@ -1231,23 +1204,6 @@
 	    }
 	
 	    earth.timer += 1;
-	    earth.explosions.forEach(function (explosion) {
-	      if (earth.timer === explosion.time ||
-	          earth.timer === explosion.time-140 ||
-	          earth.timer === explosion.time-100 ||
-	          earth.timer === explosion.time-130 ||
-	          earth.timer === explosion.time-170 ||
-	          earth.timer+120 === explosion.time) {
-	        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
-	        ghosts.forEach( function (ghost) {
-	          if (ghost) {
-	            if (ghost.idx%2) {
-	              ghost.destroy();
-	            }
-	          }
-	        });
-	      }
-	    });
 	
 	    gradient = ctx.createRadialGradient(450,sun.y,200,450,sun.y,175);
 	    gradient.addColorStop(0,"black");
@@ -1381,7 +1337,7 @@
 	      if (lunamod) {
 	        if (lunamod.hoverHeight < 120) {
 	          ctx.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
-	        } else if (lunamod.hoverHeight < 340) {
+	        } else if (lunamod.hoverHeight < 300) {
 	          ctx.drawImage(document.getElementById("lunamod_1"), lunamod.x-24, lunamod.y-24, 48, 48);
 	        } else {
 	          ctx.drawImage(document.getElementById("lunamod_2"), lunamod.x-24, lunamod.y-24, 48, 48);
