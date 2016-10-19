@@ -11,7 +11,7 @@ var attacker = {
     if (dice < 2 && shield.health > -1 && this.start < 30) {
       ghosts.push(new Ghost(450, 500, Math.round(Math.random()*4)*30+210, ghosts.length));
     }
-    if (Math.random()*4800 < 4) {
+    if (Math.random()*4800 < 3) {
       this.burst();
     }
     if (this.start % this.rate === -0) {
@@ -20,9 +20,9 @@ var attacker = {
   },
   burst: function () {
     var direction = (Math.random()*4)*30+210;
-    // for (var i=0; i<4; i++) {
+    for (var i=0; i<6; i++) {
       ghosts.push(new Ghost(450, 500, (direction+Math.random()*90)-45, ghosts.length));
-    // }
+    }
   }
 };
 

@@ -88,23 +88,6 @@ var Explosion = require('./constructors/Explosion');
     }
 
     earth.timer += 1;
-    earth.explosions.forEach(function (explosion) {
-      if (earth.timer === explosion.time ||
-          earth.timer === explosion.time-140 ||
-          earth.timer === explosion.time-100 ||
-          earth.timer === explosion.time-130 ||
-          earth.timer === explosion.time-170 ||
-          earth.timer+120 === explosion.time) {
-        explosions.push(new Explosion(300+explosion.x, earth.y+explosion.y, explosions.length));
-        ghosts.forEach( function (ghost) {
-          if (ghost) {
-            if (ghost.idx%2) {
-              ghost.destroy();
-            }
-          }
-        });
-      }
-    });
 
     gradient = ctx.createRadialGradient(450,sun.y,200,450,sun.y,175);
     gradient.addColorStop(0,"black");
@@ -238,7 +221,7 @@ var Explosion = require('./constructors/Explosion');
       if (lunamod) {
         if (lunamod.hoverHeight < 120) {
           ctx.drawImage(document.getElementById("lunamod"), lunamod.x-24, lunamod.y-24, 48, 48);
-        } else if (lunamod.hoverHeight < 340) {
+        } else if (lunamod.hoverHeight < 300) {
           ctx.drawImage(document.getElementById("lunamod_1"), lunamod.x-24, lunamod.y-24, 48, 48);
         } else {
           ctx.drawImage(document.getElementById("lunamod_2"), lunamod.x-24, lunamod.y-24, 48, 48);

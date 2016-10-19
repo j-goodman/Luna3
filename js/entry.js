@@ -65,7 +65,7 @@ window.resetGame = function () {
 window.setupGame = function () {
   objectArrays.ghosts.push(new Ghost(450, 500, 240, objectArrays.ghosts.length));
   objectArrays.ghosts.push(new Ghost(450, 500, 300, objectArrays.ghosts.length));
-  objectArrays.lunamods.push(new Lunamod(16500, 80, objectArrays.lunamods.length, canvas));
+  objectArrays.lunamods.push(new Lunamod(9600, 80, objectArrays.lunamods.length, canvas));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -10000, "clusterbomb", "3_clusterbomb", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -2000, "revolver", "3_revolver", objectArrays.powerups.length, player));
   objectArrays.powerups.push(new Powerup(Math.random()*canvas.width, -18000, "laser", "3_laser", objectArrays.powerups.length, player));
