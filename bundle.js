@@ -1145,7 +1145,7 @@
 	
 	  ctx.drawReload = function () {
 	    ctx.globalAlpha = 0.7;
-	    ctx.fillStyle = "black";
+	    ctx.fillStyle = "white";
 	    ctx.font = "12px Courier";
 	    ctx.lineWidth = 1;
 	    ctx.fillText("press ENTER to try again", 364, 525);
