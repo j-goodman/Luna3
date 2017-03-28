@@ -51,6 +51,18 @@
 	DEGREES = (Math.PI / 180);
 	RADIANS = (180 / Math.PI);
 	
+	// ENABLE FULLSCREEN MODE
+	var fullscreen = document.getElementById('fullscreen');
+	fullscreen.onclick = function () {
+	  if (canvas.mozRequestFullScreen) {
+	    canvas.mozRequestFullScreen();
+	  } else if (canvas.webkitRequestFullScreen) {
+	    canvas.webkitRequestFullScreen();
+	  }
+	  canvas.style.width = 'auto';
+	  canvas.style.height = '100%';
+	};
+	
 	//REQUIRE GAME OBJECTS
 	//Each object is a singleton
 	var shield = __webpack_require__(1);
